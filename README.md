@@ -11,5 +11,6 @@ Final DB project
 - Mauricio Antonio Carrillo
 - Marcelo Alejandro García
 
-## E-R model
-- https://cacoo.com/diagrams/rVxYCSrWYQasWN6M/219AE
+## Recursos conceptuales.
+- **E-R model**: https://cacoo.com/diagrams/rVxYCSrWYQasWN6M/219AE
+- **Relational model**: https://docs.google.com/document/d/1CGOIrEInztU8WcCctEN5Y02XEnnSknq-eUE90ve7f-w/edit?usp=sharing
