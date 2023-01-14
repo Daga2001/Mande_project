@@ -14,6 +14,8 @@ Final DB project
 ## Recursos conceptuales.
 - **E-R model**: https://cacoo.com/diagrams/rVxYCSrWYQasWN6M/219AE
 - **Relational model**: https://docs.google.com/document/d/1CGOIrEInztU8WcCctEN5Y02XEnnSknq-eUE90ve7f-w/edit?usp=sharing
+- **Data dictionary**: [data_dictionary.xlsx](https://github.com/Daga2001/Mande_project/files/10417230/data_dictionary.xlsx)
+
 
 ## Aclaraciones
 - El formato de una dirección se considera de la siguiente manera:
