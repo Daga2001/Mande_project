@@ -15,7 +15,7 @@ Final DB project
 - **E-R model**: https://cacoo.com/diagrams/rVxYCSrWYQasWN6M/219AE
 - **Relational model**: https://docs.google.com/document/d/1CGOIrEInztU8WcCctEN5Y02XEnnSknq-eUE90ve7f-w/edit?usp=sharing
 - **Data dictionary**: https://docs.google.com/spreadsheets/d/1VJ8t1gFzeU4gF5vtKtYQA3Ez9Y6jFC4X/edit?usp=sharing&ouid=113828892643060106417&rtpof=true&sd=true
-
+- **GUI Design**: [Mande.pdf](https://github.com/Daga2001/Mande_project/files/10495070/Mande.pdf)
 
 ## Aclaraciones
 - El formato de una dirección se considera de la siguiente manera:
