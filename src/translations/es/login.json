@@ -1,0 +1,17 @@
+{
+  "title": "Inicio de Sesión",
+  "subtitle": "Ingresa con tu correo y tu contraseña",
+  "placeholder-email": "Ingresa tu correo",
+  "placeholder-password": "Ingresa tu contraseña",
+  "forgot-password": "¿Olvidaste tu contraseña?",
+  "recover-password": "Recuperar",
+  "logIn": "Ingresar",
+  "account": "¿Aún no tienes una cuenta?",
+  "signUp": "Registrarme",
+  "error": {
+    "require-email": "Email requerido",
+    "require-password": "Contraseña requerida",
+    "invalid-email": "Formato de email inválido",
+    "min-password": "La contraseña debe tener mas de 5 caracteres"
+  }
+}

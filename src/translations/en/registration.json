@@ -1,0 +1,41 @@
+{
+  "registration1": {
+    "title": "Registration",
+    "first-name": "First name",
+    "last-name": "Last name",
+    "id-number": "ID number",
+    "date-birth": "Date of birth",
+    "address": "Address",
+    "email": "Email",
+    "number": "Contact number",
+    "password": "Password",
+    "profile-photo": "PROFILE PHOTO",
+    "id-photo": "ID PHOTO",
+    "bill-photo": "BILL PHOTO",
+    "verify": "Verify",
+    "error": {
+      "require": "Require",
+      "invalid-email": "Invalid email",
+      "invalid-password": "Password must be at least 5 characters"
+    }
+  },
+  "registration2": {
+    "title": "Do you want to provide a service in our app?",
+    "yes": {
+      "title": "Yes",
+      "sub-title": "Please select one or more of the following services, which you want to provide in the application:",
+      "occupations": {
+        "plumber": "Plumber",
+        "pet-care": "Pet care",
+        "locksmith": "Locksmith"
+      }
+    },
+    "no": {
+      "title": "No",
+      "sub-title": "Please choose a payment method for your transactions",
+      "title-input": "Payment methods",
+      "message": "You can change it later if you want"
+    },
+    "sign-up": "SIGN UP"
+  }
+}

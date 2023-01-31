@@ -1,0 +1,41 @@
+{
+  "registration1": {
+    "title": "Registro",
+    "first-name": "Nombre",
+    "last-name": "Apellido",
+    "id-number": "Número de identificación",
+    "date-birth": "Fechad de nacimiento",
+    "address": "Dirección de residencia",
+    "email": "Correo",
+    "number": "Npumero telefónico",
+    "password": "Contraseña",
+    "profile-photo": "FOTO DE PERFIL",
+    "id-photo": "FOTO DOC. ID",
+    "bill-photo": "FOTO FACTURA",
+    "verify": "Verificar",
+    "error": {
+      "require": "Requerido",
+      "invalid-email": "Correo inválido",
+      "invalid-password": "La contraseña debe tener mas de 5 caracteres"
+    }
+  },
+  "registration2": {
+    "title": "¿Deseas prestar algún servicio en nuestra app?",
+    "yes": {
+      "title": "Si",
+      "sub-title": "Por favor selecciona uno o varios de los sigientes servicios, los cuales quiere prestar en la aplicación:",
+      "occupations": {
+        "plumber": "Plomero",
+        "pet-care": "Cuidador de mascotas",
+        "locksmith": "Cerrajero"
+      }
+    },
+    "no": {
+      "title": "No",
+      "sub-title": "Por favor elige un medio de pago para tus transacciones",
+      "title-input": "Métodos de pago",
+      "message": "Podrás cambiarlo luego si deseas"
+    },
+    "sign-up": "REGISTRARME"
+  }
+}

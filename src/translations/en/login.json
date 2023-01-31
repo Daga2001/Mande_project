@@ -1,0 +1,17 @@
+{
+  "title": "Login",
+    "subtitle": "Enter your email and password",
+    "placeholder-email": "Enter your email",
+    "placeholder-password": "Enter your password",
+    "forgot-password": "Forgot your password?",
+    "recover-password": "Recover",
+    "logIn": "Log in",
+    "account": "Do not you have an account yet?",
+    "signUp": "Sign up",
+    "error": {
+      "require-email": "Email is a required field",
+      "require-password": "Password is a required field",
+      "invalid-email": "Invalid email format",
+      "min-password": "Password must be at least 5 characters"
+    }
+}
