@@ -1,0 +1,49 @@
+Para hacer un fetch correctamente asegurense de enviar un JSON con
+la siguiente estructura dependiendo de la URL:
+------------------------------------------------------------------
+-- mande/user/create
+------------------------------------------------------------------
+Para crear un cliente:
+{
+	"type": "Client",
+	"f_name": "Radamel",
+	"l_name": "Falcao",
+	"email": "falc@colombia.com",
+	"birth_dt": "1990-01-01",
+	"address_id": "56",
+	"location_id": "1",
+	"phone": "100509103"
+}
+
+Para crear un trabajador:
+{
+	"type": "Worker",
+	"f_name": "Radamel",
+	"l_name": "Falcao",
+	"email": "falca@colombia.com",
+	"birth_dt": "1990-01-01",
+	"address_id": "56",
+	"location_id": "1",
+    "password": "123",
+	"avg_rating": "0",
+	"avaliable": true
+}
+
+------------------------------------------------------------------
+-- mande/gpslocation/create
+------------------------------------------------------------------
+{
+	"latitude": "56.91381",
+	"longitude": "23.13991"
+}
+
+------------------------------------------------------------------
+-- mande/address/create
+------------------------------------------------------------------
+{
+	"house_id": "56",
+	"street": "23",
+	"city": "Cali",
+	"country": "Colombia",
+	"postal_code": "100006"
+}
