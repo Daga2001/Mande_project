@@ -23,32 +23,26 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class Address(models.Model):
     house_id = models.IntegerField(primary_key=True)
-    street = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    postal_code = models.IntegerField()
+    street = models.CharField(max_length=100, null=False)
+    city = models.CharField(max_length=100, null=False)
+    country = models.CharField(max_length=100, null=False)
+    postal_code = models.CharField(max_length=100, null=False)
 
 class Gps_location(models.Model):
-    latitude=models.CharField(max_length=100)
-    longitude=models.CharField(max_length=100)
+    latitude=models.CharField(max_length=100, null=False)
+    longitude=models.CharField(max_length=100, null=False)
 
 #Modelo de usuario base
 class User(AbstractBaseUser, PermissionsMixin):
-    uid = models.CharField(max_length=500, null=True)
-    f_name = models.CharField(max_length=100, null=True)
-    l_name = models.CharField(max_length=100, null=True)
-    email = models.EmailField(max_length=80, unique=True)
-    birth_dt = models.DateField(null=True)
-    address_id = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="address_id_user")
-    location_id = models.ForeignKey(Gps_location, on_delete=models.CASCADE, related_name="location_id_user")
-    # user choices
-    is_worker = models.BooleanField('worker status', default=False)
-    is_client = models.BooleanField('client status', default=False)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    uid = models.AutoField(primary_key=True)
+    f_name = models.CharField(max_length=100, null=False)
+    l_name = models.CharField(max_length=100, null=False)
+    birth_dt = models.DateField(null=False)
+    email = models.EmailField(max_length=200, unique=True, null=False)
+    address_id = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="address_id_user", null=False)
+    location_id = models.ForeignKey(Gps_location, on_delete=models.CASCADE, related_name="location_id_user", null=True)
     objects = UserManager()
     USERNAME_FIELD = 'email'
 
@@ -59,45 +53,45 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class Client(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,related_name="client")
-    phone=models.IntegerField()
+    phone=models.CharField(null=False, max_length=30, unique=True)
 
 class Worker(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,related_name="worker")
-    avg_rating=models.CharField(max_length=100)
-    avaliable=models.BooleanField()
+    user=models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="worker")
+    password=models.CharField(null=False, max_length=500)
+    avg_rating=models.DecimalField(null=False, max_digits=5, decimal_places=2, default=0.0)
+    avaliable=models.BooleanField(null=False)
 
 class Worker_img_data(models.Model):
-    idc_img_data=models.ImageField(upload_to='imagenesCedula/')
-    prof_img_data=models.ImageField(upload_to='imagenesPerfil/')
+    idc_img_data=models.ImageField(upload_to='imagenesCedula/', unique=True)
+    prof_img_data=models.ImageField(upload_to='imagenesPerfil/', unique=True)
     worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_imgdata")
 
 class Job(models.Model):
     jib = models.AutoField(primary_key=True)
-    occupation = models.CharField(max_length=200)
+    occupation = models.CharField(max_length=200, null=False)
 
 class Payment_Method(models.Model):
     num=models.IntegerField(primary_key=True)
-    type=models.CharField(max_length=200)
-    expiration_dt= models.DateField()
-    cvv=models.IntegerField()
-    funds=models.IntegerField()
+    type=models.CharField(max_length=200, null=False)
+    expiration_dt= models.DateField(null=False)
+    cvv=models.CharField(null=False, max_length=4)
+    funds=models.IntegerField(null=False, default=0)
     uid=models.ForeignKey(User,on_delete=models.CASCADE,related_name="user_id_payment")
 
 class Receipt(models.Model):
     rid=models.IntegerField(primary_key=True)
-    receipt_data=models.CharField(max_length=200)
+    receipt_data=models.CharField(max_length=200, null=False)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_receipt")
 
 class Worker_Job(models.Model):
     worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_job")
     jid=models.ForeignKey(Job,on_delete=models.CASCADE,related_name="jid_worker")
-    type=models.CharField(max_length=200)
-    price=models.IntegerField()
+    price=models.IntegerField(null=True)
 
 class Service(models.Model):
-    sid=models.IntegerField(primary_key=True)
-    rating=models.CharField(max_length=100)
-    descrpition=models.CharField(max_length=500)
+    sid=models.AutoField(primary_key=True)
+    rating=models.DecimalField(null=True, max_digits=5, decimal_places=2)
+    descrpition=models.CharField(max_length=500, null=True)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_service")
     worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_service")
     jid=models.ForeignKey(Job,on_delete=models.CASCADE,related_name="jid_service")
@@ -105,7 +99,7 @@ class Service(models.Model):
 
 class History(models.Model):
     hid=models.IntegerField(primary_key=True)
-    amount=models.IntegerField()
+    amount=models.DecimalField(null=False,  max_digits=30, decimal_places=2)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_history")
     sid=models.ForeignKey(Service,on_delete=models.CASCADE,related_name="sid_history")
 

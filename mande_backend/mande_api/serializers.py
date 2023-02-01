@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from mande_api.models import *
+from dateutil.relativedelta import relativedelta
 
 #Serializer para authenticacion del usuario
 class AuthTokenSerializer(serializers.Serializer):
-    """serializer for the user authentication objectt"""
+    """serializer for the user authentication object"""
     email = serializers.CharField()
     password = serializers.CharField(
         style={'input_type': 'password'},
@@ -32,6 +33,7 @@ class AuthTokenSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.CharField(write_only=True)
     phone=serializers.IntegerField(write_only=True,required=False)
+    password=serializers.CharField(write_only=True,required=False)
     avg_rating=serializers.CharField(write_only=True,required=False)
     avaliable=serializers.BooleanField(write_only=True,required=False)
 
@@ -41,10 +43,6 @@ class UserSerializer(serializers.ModelSerializer):
         if type == "Client":
             phone = validated_data.pop('phone')
             user = get_user_model().objects.create_user(**validated_data)
-            user.is_client = True
-            # nota como todos inicializan en false en el modelo, se podria quitar
-            user.is_worker = False
-            user.is_staff = False
             user.save()
             user_cliente = Client.objects.create(
                 user=user, phone=phone)
@@ -52,20 +50,33 @@ class UserSerializer(serializers.ModelSerializer):
         elif type == "Worker":
             avg_rating=validated_data.pop('avg_rating')
             avaliable=validated_data.pop('avaliable')
+            password=validated_data.pop('password')
             user = get_user_model().objects.create_user(**validated_data)
-            user.is_client = False
-            user.is_worker = True
-            user.is_staff = True
             user.save()
             user_worker = Worker.objects.create(user=user,
                                                   avg_rating=avg_rating, 
                                                   avaliable=avaliable,
+                                                  password=password,
                                                   )
         return user
 
     class Meta:
         model = get_user_model()
-        fields = ("id","uid", "type", "password", "f_name","l_name",
+        fields = ("uid", "type", "password", "f_name","l_name",
                   "birth_dt", "email", "address_id", "location_id", 
-                  "phone", "avg_rating", "avaliable",
+                  "phone", "avg_rating", "avaliable"
                   )
+
+class GpsLocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Gps_location
+        fields = ("id", "latitude","longitude", 
+                    )
+
+class AddressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Address
+        fields = ("house_id", "street", "city", "country", "postal_code", 
+                    )
