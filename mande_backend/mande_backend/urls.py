@@ -27,6 +27,10 @@ urlpatterns = [
     views.CreateGpsLocation.as_view(), name="create_user"),
     path('mande/address/create', 
     views.CreateAddress.as_view(), name="create_user"),
+    path('mande/workers/view', 
+    views.get_workers, name="create_user"),
+    path('mande/images/upload', 
+    views.upload_images, name="create_user"),
 ]
 
 

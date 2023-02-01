@@ -38,7 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
     avaliable=serializers.BooleanField(write_only=True,required=False)
 
     def create(self, validated_data):
-        type = validated_data.pop('type')
+        type = validated_data['type']
 
         if type == "Client":
             phone = validated_data.pop('phone')
@@ -79,4 +79,46 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ("house_id", "street", "city", "country", "postal_code", 
+                    )
+
+class WorkerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Worker
+        fields = ("user_id", "password", "avg_rating", "avaliable"
+                    )
+
+class  WorkerImgSerializer(serializers.ModelSerializer):
+    idc_img_data = models.ImageField(default="", blank = False, upload_to = 'worker_data')
+    prof_img_data = models.ImageField(default="", blank = False, upload_to = 'worker_data')
+    Worker_id = models.AutoField(primary_key=True)
+
+    # def create(self, validated_data):
+    #     receipt = Receipt.objects.create(
+    #         idc_img_data = validated_data["idc_img_data"],
+    #         prof_img_data = validated_data["prof_img_data"],
+    #         Worker_id = validated_data["Worker_id"],
+    #     )
+    #     return receipt
+
+    class Meta:
+        model = Worker_img_data
+        fields = ("idc_img_data", "prof_img_data", "worker_id"
+                    )
+
+class  ReceiptImgSerializer(serializers.ModelSerializer):
+    rid = models.AutoField(primary_key=True)
+    receipt_data = models.ImageField(default="", blank = False, upload_to = 'client_data')
+    Worker_id = models.IntegerField()
+
+    def create(self, validated_data):
+        receipt = Receipt.objects.create(
+            receipt_data = validated_data["receipt_data"],
+            client_id = validated_data["client_id"]
+        )
+        return receipt
+
+    class Meta:
+        model = Receipt        
+        fields = ("rid", "receipt_data", "client_id"
                     )

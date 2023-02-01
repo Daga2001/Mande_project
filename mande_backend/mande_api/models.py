@@ -37,6 +37,7 @@ class Gps_location(models.Model):
 #Modelo de usuario base
 class User(AbstractBaseUser, PermissionsMixin):
     uid = models.AutoField(primary_key=True)
+    type = models.CharField(max_length=200, null=False)
     f_name = models.CharField(max_length=100, null=False)
     l_name = models.CharField(max_length=100, null=False)
     birth_dt = models.DateField(null=False)
@@ -64,7 +65,7 @@ class Worker(models.Model):
 class Worker_img_data(models.Model):
     idc_img_data=models.ImageField(upload_to='imagenesCedula/', unique=True)
     prof_img_data=models.ImageField(upload_to='imagenesPerfil/', unique=True)
-    worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_imgdata")
+    worker_id=models.OneToOneField(Worker,on_delete=models.CASCADE,related_name="worker_id_imgdata")
 
 class Job(models.Model):
     jib = models.AutoField(primary_key=True)
@@ -79,13 +80,13 @@ class Payment_Method(models.Model):
     uid=models.ForeignKey(User,on_delete=models.CASCADE,related_name="user_id_payment")
 
 class Receipt(models.Model):
-    rid=models.IntegerField(primary_key=True)
-    receipt_data=models.CharField(max_length=200, null=False)
-    client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_receipt")
+    rid=models.AutoField(primary_key=True)
+    receipt_data=models.ImageField(max_length=200,null=False,unique=True)
+    client_id=models.OneToOneField(Client,on_delete=models.CASCADE,related_name="client_id_receipt")
 
 class Worker_Job(models.Model):
-    worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_job")
-    jid=models.ForeignKey(Job,on_delete=models.CASCADE,related_name="jid_worker")
+    worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_job",null=False)
+    jid=models.ForeignKey(Job,on_delete=models.CASCADE,related_name="jid_worker",null=False)
     price=models.IntegerField(null=True)
 
 class Service(models.Model):
@@ -98,7 +99,7 @@ class Service(models.Model):
     card_num=models.ForeignKey(Payment_Method,on_delete=models.CASCADE,related_name="card_num_service")
 
 class History(models.Model):
-    hid=models.IntegerField(primary_key=True)
+    hid=models.AutoField(primary_key=True)
     amount=models.DecimalField(null=False,  max_digits=30, decimal_places=2)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_history")
     sid=models.ForeignKey(Service,on_delete=models.CASCADE,related_name="sid_history")
