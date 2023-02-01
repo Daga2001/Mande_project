@@ -47,3 +47,31 @@ Para crear un trabajador:
 	"country": "Colombia",
 	"postal_code": "100006"
 }
+
+------------------------------------------------------------------
+-- mande/workers/view (para ver todos los trabajadores disponibles como cliente)
+------------------------------------------------------------------
+se requiere token para autenticar al cliente.
+
+------------------------------------------------------------------
+-- mande/images/upload
+------------------------------------------------------------------
+se requiere token para autenticar al cliente o trabajador.
+
+--- Para subir imagenes como cliente:
+se debe crear un formdata con esta estructura:
+
+const body = new FormData();
+body.append("idc_img_data", imagenes[i], imagenes[i].idc);
+body.append("prof_img_data", imagenes[i], imagenes[i].prof); 
+body.append("worker_id", worker_id); // se puede extraer del contexto
+
+para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
+
+--- Para subir imagenes como trabajador:
+se debe crear un formdata con esta estructura:
+
+const body = new FormData();
+body.append("receipt_data", imagenes[i], imagenes[i].receipt);
+
+para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
