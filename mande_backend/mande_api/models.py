@@ -64,7 +64,7 @@ class Worker(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="worker")
     password=models.CharField(null=False, max_length=500)
     avg_rating=models.DecimalField(null=False, max_digits=5, decimal_places=2, default=0.0)
-    avaliable=models.BooleanField(null=False)
+    available=models.BooleanField(null=False)
     
 class Worker_img_data(models.Model):
     idc_img_data=models.ImageField(upload_to='imagenesCedula/')

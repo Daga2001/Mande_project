@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailed, PaymentMethodSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -55,11 +55,11 @@ class CreateGpsLocation(generics.CreateAPIView):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_workers(request):
+def get_workers(request, jobid):
     user = Token.objects.get(key=request.auth.key).user
     if user.type == "Client":
-        trabajadores = Worker.objects.all()
-        serializer = WorkerSerializer(trabajadores, many=True)
+        trabajadores = Worker_Job.objects.filter(jid=jobid)
+        serializer = WorkerJobSerializerDetailedWorker(trabajadores, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else: 
         return Response({"error": True}, status=status.HTTP_401_UNAUTHORIZED)
@@ -337,7 +337,7 @@ def get_my_jobs(request):
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Worker":
         jobs = Worker_Job.objects.filter(worker_id=user.uid)
-        serializer = WorkerJobSerializerDetailed(jobs, many = True)
+        serializer = WorkerJobSerializerDetailedJob(jobs, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": "Only workers can view all jobs available!"}, status=status.HTTP_404_NOT_FOUND)
@@ -389,3 +389,4 @@ def view_my_payment_method(request):
     else:
         return Response({"error": True, "error_cause": "User hasn't registered payment methods!"}, status=status.HTTP_404_NOT_FOUND)
 
+# Método para

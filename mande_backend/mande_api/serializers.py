@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
     phone=serializers.CharField(write_only=True,required=False)
     password=serializers.CharField(write_only=True,required=False)
     avg_rating=serializers.CharField(write_only=True,required=False)
-    avaliable=serializers.BooleanField(write_only=True,required=False)
+    available=serializers.BooleanField(write_only=True,required=False)
 
     def create(self, validated_data):
         type = validated_data['type']
@@ -54,7 +54,7 @@ class UserSerializer(serializers.ModelSerializer):
         elif type == "Worker":
             print("valid:",validated_data)
             avg_rating=validated_data.pop('avg_rating')
-            avaliable=validated_data.pop('avaliable')
+            available=validated_data.pop('available')
             password=validated_data.pop('password')
             hashedPass = hashlib.sha256()
             hashedPass.update(password.encode())
@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
             user_worker = Worker.objects.create(user=user,
                                                   avg_rating=avg_rating, 
-                                                  avaliable=avaliable,
+                                                  available=available,
                                                   password=fPass,
                                                   )
         return user
@@ -72,7 +72,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ("uid", "type", "password", "f_name","l_name",
                   "birth_dt", "email", "address_id", 
-                  "phone", "avg_rating", "avaliable"
+                  "phone", "avg_rating", "available"
                   )
 
 class GpsLocationSerializer(serializers.ModelSerializer):
@@ -93,7 +93,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Worker
-        fields = ("user_id", "password", "avg_rating", "avaliable"
+        fields = ("user_id", "password", "avg_rating", "available"
                     )
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -154,7 +154,7 @@ class WorkerJobSerializer(serializers.ModelSerializer):
             "jid", "price", "worker_id"
         )
 
-class WorkerJobSerializerDetailed(serializers.ModelSerializer):
+class WorkerJobSerializerDetailedJob(serializers.ModelSerializer):
     job = JobSerializer(many=False, read_only=True, source='jid')
     
     class Meta:
@@ -169,4 +169,13 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
         model = Payment_Method
         fields = (
             "num", "type", "expiration_dt", "cvv", "funds", "uid"
+        )
+
+class WorkerJobSerializerDetailedWorker(serializers.ModelSerializer):
+    worker = WorkerSerializer(many=False, read_only=True, source='worker_id')
+    
+    class Meta:
+        model = Worker_Job
+        fields = (
+            "worker", "price", "worker_id"
         )

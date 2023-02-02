@@ -29,7 +29,7 @@ urlpatterns = [
     views.update_location_usr, name="update_gps"),
     path('mande/address/create', 
     views.CreateAddress.as_view(), name="create_address"),
-    path('mande/workers/view', 
+    path('mande/workers/view/<int:jobid>/', 
     views.get_workers, name="view_workers"),
     path('mande/images/upload', 
     views.upload_images, name="upload_img"),
