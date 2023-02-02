@@ -162,3 +162,11 @@ class WorkerJobSerializerDetailed(serializers.ModelSerializer):
         fields = (
             "job", "price", "worker_id"
         )
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+
+     class Meta:
+        model = Payment_Method
+        fields = (
+            "num", "type", "expiration_dt", "cvv", "funds", "uid"
+        )

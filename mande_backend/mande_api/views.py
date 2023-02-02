@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailed
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailed, PaymentMethodSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -341,3 +341,51 @@ def get_my_jobs(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": "Only workers can view all jobs available!"}, status=status.HTTP_404_NOT_FOUND)
+
+# Método para registrar un método de pago
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def register_payment_method(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PaymentMethodSerializer()
+    request.data["uid"] = user.uid
+    request.data["funds"] = round(uniform(0, 100000),2)
+    hashedNum = hashlib.sha256()
+    hashedNum.update(request.data["num"].encode())
+    hexNum = hashedNum.hexdigest()
+    request.data["num"] = hexNum
+    hashedCvv = hashlib.sha256()
+    hashedCvv.update(request.data["cvv"].encode())
+    hexCvv = hashedCvv.hexdigest()
+    request.data["cvv"] = hexCvv
+    serializer = PaymentMethodSerializer(data=request.data, many=False)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Método para que un usuario pueda visualizar sus métodos de pago registrados en
+# el sistema
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def view_my_payment_method(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    payment_methods = Payment_Method.objects.filter(uid=user.uid)
+    serializer = PaymentMethodSerializer(payment_methods, many=True)
+    nPayments = len(payment_methods)
+    if nPayments > 0:
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": True, "error_cause": "User hasn't registered payment methods!"}, status=status.HTTP_404_NOT_FOUND)
+

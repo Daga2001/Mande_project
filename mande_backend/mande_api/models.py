@@ -79,11 +79,11 @@ class Worker_img_data(models.Model):
         ]
 
 class Payment_Method(models.Model):
-    num=models.IntegerField(primary_key=True)
+    num=models.CharField(primary_key=True, max_length=200)
     type=models.CharField(max_length=200, null=False)
     expiration_dt= models.DateField(null=False)
-    cvv=models.CharField(null=False, max_length=4)
-    funds=models.IntegerField(null=False, default=0)
+    cvv=models.CharField(null=False, max_length=200)
+    funds=models.DecimalField(null=False, default=0, max_digits=30, decimal_places=2)
     uid=models.ForeignKey(User,on_delete=models.CASCADE,related_name="user_id_payment")
 
 class Receipt(models.Model):

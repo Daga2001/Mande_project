@@ -47,6 +47,10 @@ urlpatterns = [
     views.register_job, name="reg_job"),
     path('mande/worker/view/ownjobs',
     views.get_my_jobs, name="my_jobs"),
+    path('mande/paymentMethod/register',
+    views.register_payment_method, name="reg_pay_method"),
+    path('mande/paymentMethod/view',
+    views.view_my_payment_method, name="reg_pay_method"),
 ]
 
 
