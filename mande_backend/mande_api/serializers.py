@@ -188,11 +188,3 @@ class ServiceSerializer(serializers.ModelSerializer):
             "sid", "rating", "description", "client_id", "worker_id", 
             "jid", "card_num"
         )
-
-class tokenSerializer(serializers.ModelField):
-
-    class Meta:
-        model = Token
-        fields = (
-            "key", "user", "created"
-        )

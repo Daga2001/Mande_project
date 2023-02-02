@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer, tokenSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -436,6 +436,7 @@ def request_service(request):
         return Response({"error": True, "error_cause": 'Only clients can request a service!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Método para que un usuario se logee
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([AllowAny])
@@ -466,3 +467,34 @@ def login_user(request):
             return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"answer": False, "description": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+# Método para que un usuario pueda conocer sus datos
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_my_data(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Client":
+        client = Client.objects.get(user=user)
+        serializer = UserSerializer(user, many=False)
+        reqData = {
+            "user": serializer.data,
+            "phone": client.phone
+        }
+        return Response(reqData, status=status.HTTP_200_OK)
+    elif user.type == "Worker":
+        worker = Worker.objects.get(user=user)
+        serializer = UserSerializer(user, many=False)
+        reqData = {
+            "user": serializer.data,
+            "password": worker.password,
+	        "avg_rating": worker.avg_rating,
+        	"available": worker.available
+        }
+        return Response(reqData, status=status.HTTP_200_OK)
+    else: 
+        return Response({"error": True, "error_cause": 'Unauthorized role!'}, status=status.HTTP_404_NOT_FOUND)
