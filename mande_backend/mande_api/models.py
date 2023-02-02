@@ -30,10 +30,6 @@ class Address(models.Model):
     country = models.CharField(max_length=100, null=False)
     postal_code = models.CharField(max_length=100, null=False)
 
-class Gps_location(models.Model):
-    latitude=models.CharField(max_length=100, null=False)
-    longitude=models.CharField(max_length=100, null=False)
-
 #Modelo de usuario base
 class User(AbstractBaseUser, PermissionsMixin):
     uid = models.AutoField(primary_key=True)
@@ -43,9 +39,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     birth_dt = models.DateField(null=False)
     email = models.EmailField(max_length=200, unique=True, null=False)
     address_id = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="address_id_user", null=False)
-    location_id = models.ForeignKey(Gps_location, on_delete=models.CASCADE, related_name="location_id_user", null=True)
     objects = UserManager()
     USERNAME_FIELD = 'email'
+
+class Gps_location(models.Model):
+    uid=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True,related_name="user_id_gps")
+    latitude=models.CharField(max_length=100)
+    longitude=models.CharField(max_length=100)
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -53,7 +53,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 class Client(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,related_name="client")
+    user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True,related_name="client")
     phone=models.CharField(null=False, max_length=30, unique=True)
 
 class Worker(models.Model):
@@ -61,11 +61,18 @@ class Worker(models.Model):
     password=models.CharField(null=False, max_length=500)
     avg_rating=models.DecimalField(null=False, max_digits=5, decimal_places=2, default=0.0)
     avaliable=models.BooleanField(null=False)
-
+    
 class Worker_img_data(models.Model):
-    idc_img_data=models.ImageField(upload_to='imagenesCedula/', unique=True)
-    prof_img_data=models.ImageField(upload_to='imagenesPerfil/', unique=True)
+    idc_img_data=models.ImageField(upload_to='imagenesCedula/')
+    prof_img_data=models.ImageField(upload_to='imagenesPerfil/')
     worker_id=models.OneToOneField(Worker,on_delete=models.CASCADE,related_name="worker_id_imgdata")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['idc_img_data', 'prof_img_data'], name='idc_prof_pk'
+            )
+        ]
 
 class Job(models.Model):
     jib = models.AutoField(primary_key=True)
@@ -88,6 +95,13 @@ class Worker_Job(models.Model):
     worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_job",null=False)
     jid=models.ForeignKey(Job,on_delete=models.CASCADE,related_name="jid_worker",null=False)
     price=models.IntegerField(null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['worker_id', 'jid'], name='worker_job_pk'
+            )
+        ]
 
 class Service(models.Model):
     sid=models.AutoField(primary_key=True)

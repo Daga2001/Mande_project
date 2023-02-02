@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ("uid", "type", "password", "f_name","l_name",
-                  "birth_dt", "email", "address_id", "location_id", 
+                  "birth_dt", "email", "address_id", 
                   "phone", "avg_rating", "avaliable"
                   )
 
@@ -71,7 +71,7 @@ class GpsLocationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gps_location
-        fields = ("id", "latitude","longitude", 
+        fields = ("uid", "latitude","longitude", 
                     )
 
 class AddressSerializer(serializers.ModelSerializer):

@@ -25,6 +25,8 @@ urlpatterns = [
     views.CreateUserAdminView.as_view(), name="create_user"),
     path('mande/gpslocation/create', 
     views.CreateGpsLocation.as_view(), name="create_user"),
+    path('mande/gpslocation/update', 
+    views.update_location_usr, name="create_user"),
     path('mande/address/create', 
     views.CreateAddress.as_view(), name="create_user"),
     path('mande/workers/view', 

@@ -24,6 +24,7 @@ from django.http import HttpResponse
 import random
 from weasyprint import HTML, CSS
 from dateutil.relativedelta import relativedelta
+from random import randrange, uniform
 
 # Create your views here.
 
@@ -136,5 +137,33 @@ def upload_images(request):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         else: 
             return Response({"error": True}, status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response({"error": True, "error_cause": "Invalid request method!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Método para actualizar la ubicación gps del trabajador
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_location_usr(request):
+    if request.method == "PUT":
+        try:
+            user = Token.objects.get(key=request.auth.key).user
+        except User.DoesNotExist:
+            return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            locationGps = Gps_location.objects.get(uid=user.uid)
+        except Gps_location.DoesNotExist:
+            return Response({"error": True, "error_cause": 'Location does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        reqBody = {
+            "uid": user.uid,
+            "latitude": request.data["latitude"],
+            "longitude": request.data["longitude"]
+        }
+        serializer = GpsLocationSerializer(
+            locationGps, data=reqBody, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": "Invalid request method!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

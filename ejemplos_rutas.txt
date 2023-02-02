@@ -11,7 +11,6 @@ Para crear un cliente:
 	"email": "falc@colombia.com",
 	"birth_dt": "1990-01-01",
 	"address_id": "56",
-	"location_id": "1",
 	"phone": "100509103"
 }
 
@@ -23,7 +22,6 @@ Para crear un trabajador:
 	"email": "falca@colombia.com",
 	"birth_dt": "1990-01-01",
 	"address_id": "56",
-	"location_id": "1",
     "password": "123",
 	"avg_rating": "0",
 	"avaliable": true
@@ -33,6 +31,7 @@ Para crear un trabajador:
 -- mande/gpslocation/create
 ------------------------------------------------------------------
 {
+	"uid": 1,
 	"latitude": "56.91381",
 	"longitude": "23.13991"
 }
@@ -75,3 +74,17 @@ const body = new FormData();
 body.append("receipt_data", imagenes[i], imagenes[i].receipt);
 
 para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
+
+------------------------------------------------------------------
+-- mande/gpslocation/update
+------------------------------------------------------------------
+Se debe de autenticar el usuario con un token.
+Si se quiere actualizar la ubicación de un usuario:
+
+{
+	"latitude": "56.913832",
+	"longitude": "23.139953"
+}
+
+Un usuario ya no tiene una ubicacion gps asociada, para facilitar la creacion y 
+modificacion de la misma se agregó un fk del usuario a la tabla gps_location.
