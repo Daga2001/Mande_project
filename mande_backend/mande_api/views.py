@@ -73,10 +73,10 @@ def get_workers(request, jobid):
 
 @api_view(['POST', 'PUT'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def upload_images(request):
+@permission_classes([AllowAny])
+def upload_images(request,id):
     try:
-        user = Token.objects.get(key=request.auth.key).user
+        user = User.objects.get(uid=id)
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if request.method == "POST":

@@ -48,12 +48,12 @@ Para crear un trabajador:
 }
 
 ------------------------------------------------------------------
--- mande/workers/view (para ver todos los trabajadores disponibles como cliente)
+-- mande/workers/view/<id de trabajo>/ (para ver todos los trabajadores disponibles como cliente)
 ------------------------------------------------------------------
 se requiere token para autenticar al cliente.
 
 ------------------------------------------------------------------
--- mande/images/upload
+-- /mande/images/upload/<id del usuario>/
 ------------------------------------------------------------------
 se requiere token para autenticar al cliente o trabajador.
 
@@ -163,3 +163,33 @@ para registrar un trabajo:
 ------------------------------------------------------------------
 debe de autenticarse el usuario como trabajador.
 para ver los trabajos que le pertenecen.
+
+------------------------------------------------------------------
+-- mande/paymentMethod/register
+------------------------------------------------------------------
+requiere de autenticacion del usuario.
+para registrar un método de pago:
+{
+    "num": "123123321",
+    "type": "MasterCard",
+    "expiration_dt": "2032-12-31",
+    "cvv": "123"
+}
+
+------------------------------------------------------------------
+-- mande/paymentMethod/view
+------------------------------------------------------------------
+Solamente requiere autenticacion.
+
+------------------------------------------------------------------
+-- mande/service/request
+------------------------------------------------------------------
+Se requiere autenticacion del cliente.
+
+{
+	"description": "Quiero un jugador pro para que me ayude a subir a diamante rapido y pueda jugar un torneo de Freefire",
+	"client_id": "3",
+	"worker_id": "1",
+	"jid": "2",
+	"card_num": "123123321"
+}
