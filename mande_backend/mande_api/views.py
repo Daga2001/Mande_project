@@ -179,9 +179,11 @@ def update_location_usr(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def view_location_usr(request, usrid):
-
-    location = Gps_location.objects.get(pk=usrid)
+def view_location_usr(request):
+    try:
+        location = Gps_location.objects.get(pk=request.data["uid"])
+    except Gps_location.DoesNotExist:
+        return Response({"error": True, "error_cause": 'Location does not exist'}, status=status.HTTP_404_NOT_FOUND)
     serializer = GpsLocationSerializer(location, many=False)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

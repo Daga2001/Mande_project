@@ -91,6 +91,14 @@ Un usuario ya no tiene una ubicacion gps asociada, para facilitar la creacion y
 modificacion de la misma se agregó un fk del usuario a la tabla gps_location.
 
 ------------------------------------------------------------------
+-- mande/gpslocation/view
+------------------------------------------------------------------
+para que el usuario pueda ver su propia ubicacion:
+{
+    "uid": "1"
+}
+
+------------------------------------------------------------------
 -- mande/job/create
 ------------------------------------------------------------------
 para crear un trabajo:
