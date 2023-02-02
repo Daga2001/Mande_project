@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -25,6 +25,7 @@ import random
 from weasyprint import HTML, CSS
 from dateutil.relativedelta import relativedelta
 from random import randrange, uniform
+import hashlib
 
 # Create your views here.
 
@@ -167,3 +168,96 @@ def update_location_usr(request):
             return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": "Invalid request method!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Clase para crear un trabajo
+
+class CreateJob(generics.CreateAPIView):
+    permission_classes = [
+        AllowAny]  # el allowAny no es permanente debe cambiarse en un futuro
+    serializer_class = JobSerializer
+
+# Método para actualizar datos del usuario
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_user(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    request.data["type"] = user.type
+    serializer = UserSerializer(
+        user, data=request.data, context={'request': request}
+    )
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+# Método para actualizar datos del trabajador y cliente
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_worker_cli(request, type):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Client" and type == "client":
+        request.data["user"] = user
+        try:
+            client = Client.objects.get(user=user)
+        except:
+            return Response({"error": True, "error_cause": 'Client does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ClientSerializer(
+            client, data=request.data, context={'request': request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    elif user.type == "Worker" and type == "worker":
+        request.data["user"] = user
+        password = request.data["password"]
+        hashedPass = hashlib.sha256()
+        hashedPass.update(password.encode())
+        fPass = hashedPass.hexdigest()
+        request.data["password"] = fPass
+        try:
+            worker = Worker.objects.get(user=user)
+        except:
+            return Response({"error": True, "error_cause": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = WorkerSerializer(
+            worker, data=request.data, context={'request': request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({ "error": True, "error_cause": "The user has an invalid role!" }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+# Método para comparar 1 cadenas de texto encriptada con una no encriptada
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def compare_sha256(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if 'encrypted' not in request.data or 'str' not in request.data:
+        return Response({"error": True, "error_cause": 'The request body should include encrypted and str fields!'}, status=status.HTTP_404_NOT_FOUND)
+    else:
+        encrypted = request.data["encrypted"]
+        str = request.data["str"]
+        hashStr = hashlib.sha256()
+        hashStr.update(str.encode())
+        hexStr = hashStr.hexdigest()
+        return Response({"answer": encrypted == hexStr}, status=status.HTTP_200_OK)

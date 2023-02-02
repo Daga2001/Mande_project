@@ -1,0 +1,19 @@
+Documentacion:
+https://docs.python.org/3/library/crypto.html
+
+La idea de este algoritmo es encriptar información de la base de datos.
+
+código de ejemplo:
+import hashlib
+m = hashlib.sha256()
+hash = "12345"
+m.update(hash.encode())
+digest = m.digest()
+hexdigest = m.hexdigest()
+print("encrypted digest:\n",digest)
+print("encrypted hexdigest:\n", hexdigest)
+h = hashlib.new("sha256")
+h.update(b"12345")
+hex2 = h.hexdigest()
+print("decripted hex:\n", hexdigest == hex2)
+print("encoded:", b"12345",hash.encode())

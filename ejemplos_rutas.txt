@@ -88,3 +88,46 @@ Si se quiere actualizar la ubicación de un usuario:
 
 Un usuario ya no tiene una ubicacion gps asociada, para facilitar la creacion y 
 modificacion de la misma se agregó un fk del usuario a la tabla gps_location.
+
+------------------------------------------------------------------
+-- mande/job/create
+------------------------------------------------------------------
+para crear un trabajo:
+
+{
+    "occupation": "Jugador de LOL"
+}
+
+------------------------------------------------------------------
+-- mande/user/update
+------------------------------------------------------------------
+Para actualizar la informacion de un usuario
+
+{
+	"f_name": "Radamel",
+	"l_name": "Falcao",
+	"birth_dt": "1990-01-03",
+	"email": "falc3@colombia.com",
+	"address_id": "56"
+}
+
+------------------------------------------------------------------
+-- mande/worker/update
+------------------------------------------------------------------
+Para actualizar la informacion de un trabajador:
+
+{
+    "password": "123",
+    "avg_rating": "0.00",
+    "jid": null,
+    "avaliable": true
+}
+
+------------------------------------------------------------------
+-- mande/client/update
+------------------------------------------------------------------
+Para actualizar la informacion de un cliente:
+
+{
+    "phone": "1924182920"
+}

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from mande_api.models import *
 from dateutil.relativedelta import relativedelta
+import hashlib
 
 #Serializer para authenticacion del usuario
 class AuthTokenSerializer(serializers.Serializer):
@@ -51,12 +52,15 @@ class UserSerializer(serializers.ModelSerializer):
             avg_rating=validated_data.pop('avg_rating')
             avaliable=validated_data.pop('avaliable')
             password=validated_data.pop('password')
+            hashedPass = hashlib.sha256()
+            hashedPass.update(password.encode())
+            fPass = hashedPass.hexdigest()
             user = get_user_model().objects.create_user(**validated_data)
             user.save()
             user_worker = Worker.objects.create(user=user,
                                                   avg_rating=avg_rating, 
                                                   avaliable=avaliable,
-                                                  password=password,
+                                                  password=fPass,
                                                   )
         return user
 
@@ -85,7 +89,14 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Worker
-        fields = ("user_id", "password", "avg_rating", "avaliable"
+        fields = ("user_id", "jid", "password", "avg_rating", "avaliable"
+                    )
+
+class ClientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Client
+        fields = ("user_id", "phone"
                     )
 
 class  WorkerImgSerializer(serializers.ModelSerializer):
@@ -122,3 +133,11 @@ class  ReceiptImgSerializer(serializers.ModelSerializer):
         model = Receipt        
         fields = ("rid", "receipt_data", "client_id"
                     )
+
+class JobSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Job
+        fields = (
+            "jib", "occupation"
+        )
