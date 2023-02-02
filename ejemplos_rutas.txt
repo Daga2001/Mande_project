@@ -142,5 +142,24 @@ Se debe de autenticar el usuario con un token.
 }
 
 ------------------------------------------------------------------
--- mande/compare/encoded
+-- mande/jobs/view
 ------------------------------------------------------------------
+debe de autenticarse el usuario como trabajador.
+Para que pueda ver todos los trabajos disponibles
+
+------------------------------------------------------------------
+-- mande/worker/register/job
+------------------------------------------------------------------
+debe de autenticarse el usuario como trabajador.
+para registrar un trabajo:
+
+{
+    "occupation": "Jugador de Roblox",
+    "price": 1293412
+}
+
+------------------------------------------------------------------
+-- mande/worker/view/ownjobs
+------------------------------------------------------------------
+debe de autenticarse el usuario como trabajador.
+para ver los trabajos que le pertenecen.

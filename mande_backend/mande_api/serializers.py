@@ -151,5 +151,14 @@ class WorkerJobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worker_Job
         fields = (
-            "jid", "worker_id"
+            "jid", "price", "worker_id"
+        )
+
+class WorkerJobSerializerDetailed(serializers.ModelSerializer):
+    job = JobSerializer(many=False, read_only=True, source='jid')
+    
+    class Meta:
+        model = Worker_Job
+        fields = (
+            "job", "price", "worker_id"
         )

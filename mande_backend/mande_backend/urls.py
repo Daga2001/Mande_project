@@ -42,9 +42,11 @@ urlpatterns = [
     path('mande/compare/encoded',
     views.compare_sha256, name="compare_encoded"),
     path('mande/jobs/view',
-    views.get_all_jobs, name="compare_encoded"),
+    views.get_all_jobs, name="all_jobs_view"),
     path('mande/worker/register/job',
-    views.register_job, name="compare_encoded"),
+    views.register_job, name="reg_job"),
+    path('mande/worker/view/ownjobs',
+    views.get_my_jobs, name="my_jobs"),
 ]
 
 
