@@ -174,6 +174,16 @@ def update_location_usr(request):
     else:
         return Response({"error": True, "error_cause": "Invalid request method!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# Método para que se pueda visualiza
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def view_location_usr(request, usrid):
+    location = Gps_location.objects.get(pk=usrid)
+    serializer = GpsLocationSerializer(location, many=False)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 # Clase para crear un trabajo
 
 class CreateJob(generics.CreateAPIView):
@@ -215,7 +225,7 @@ def update_worker_cli(request, type):
         request.data["user"] = user
         try:
             client = Client.objects.get(user=user)
-        except:
+        except Client.DoesNotExist:
             return Response({"error": True, "error_cause": 'Client does not exist'}, status=status.HTTP_404_NOT_FOUND)
         serializer = ClientSerializer(
             client, data=request.data, context={'request': request}
@@ -234,7 +244,7 @@ def update_worker_cli(request, type):
         request.data["password"] = fPass
         try:
             worker = Worker.objects.get(user=user)
-        except:
+        except Worker.DoesNotExist:
             return Response({"error": True, "error_cause": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)
         serializer = WorkerSerializer(
             worker, data=request.data, context={'request': request}

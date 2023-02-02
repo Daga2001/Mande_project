@@ -27,6 +27,8 @@ urlpatterns = [
     views.CreateGpsLocation.as_view(), name="create_gps"),
     path('mande/gpslocation/update', 
     views.update_location_usr, name="update_gps"),
+    path('mande/gpslocation/view/<int:usrid>/', 
+    views.view_location_usr, name="update_gps"),
     path('mande/address/create', 
     views.CreateAddress.as_view(), name="create_address"),
     path('mande/workers/view/<int:jobid>/', 

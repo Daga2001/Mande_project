@@ -76,7 +76,7 @@ class UserSerializer(serializers.ModelSerializer):
                   )
 
 class GpsLocationSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = Gps_location
         fields = ("uid", "latitude","longitude", 
