@@ -6,6 +6,8 @@ import ResgistrationPage2 from "./pages/registrationPage2/ResgistrationPage2";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import ServicesProvided from "./pages/servicesProvided/ServicesProvided";
+import ServiceInformation from "./pages/serviceInformation/ServiceInformation";
+import ServiceRequest from "./pages/serviceRequest/ServiceRequest";
 import Orders from "./pages/orders/Orders";
 import Sidebar from "./components/sidebar/Sidebar";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -32,6 +34,8 @@ function App() {
                   <Route path="home" element={<Home />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="services" element={<ServicesProvided />} />
+                  <Route path="services/info" element={<ServiceInformation/>} />
+                  <Route path="services/request" element={<ServiceRequest/>} />
                   <Route path="orders" element={<Orders />} />
                 </Route>
               </Route>
