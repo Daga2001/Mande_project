@@ -48,7 +48,7 @@ class Gps_location(models.Model):
     longitude=models.CharField(max_length=100)
 
 class Job(models.Model):
-    jib = models.AutoField(primary_key=True)
+    jid = models.AutoField(primary_key=True)
     occupation = models.CharField(max_length=200, null=False, unique=True)
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -58,11 +58,10 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class Client(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True,related_name="client")
-    phone=models.CharField(null=False, max_length=30, unique=True)
+    phone=models.CharField(null=False, max_length=100, unique=True)
 
 class Worker(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="worker")
-    jid = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="job_id_user", null=True)
     password=models.CharField(null=False, max_length=500)
     avg_rating=models.DecimalField(null=False, max_digits=5, decimal_places=2, default=0.0)
     avaliable=models.BooleanField(null=False)

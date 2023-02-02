@@ -41,6 +41,10 @@ urlpatterns = [
     views.update_worker_cli, name="update_worker"),
     path('mande/compare/encoded',
     views.compare_sha256, name="compare_encoded"),
+    path('mande/jobs/view',
+    views.get_all_jobs, name="compare_encoded"),
+    path('mande/worker/register/job',
+    views.register_job, name="compare_encoded"),
 ]
 
 

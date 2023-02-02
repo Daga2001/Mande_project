@@ -33,7 +33,7 @@ class AuthTokenSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.CharField(write_only=True)
-    phone=serializers.IntegerField(write_only=True,required=False)
+    phone=serializers.CharField(write_only=True,required=False)
     password=serializers.CharField(write_only=True,required=False)
     avg_rating=serializers.CharField(write_only=True,required=False)
     avaliable=serializers.BooleanField(write_only=True,required=False)
@@ -43,12 +43,16 @@ class UserSerializer(serializers.ModelSerializer):
 
         if type == "Client":
             phone = validated_data.pop('phone')
+            hashedPass = hashlib.sha256()
+            hashedPass.update(phone.encode())
+            fPass = hashedPass.hexdigest()
             user = get_user_model().objects.create_user(**validated_data)
             user.save()
             user_cliente = Client.objects.create(
-                user=user, phone=phone)
+                user=user, phone=fPass)
 
         elif type == "Worker":
+            print("valid:",validated_data)
             avg_rating=validated_data.pop('avg_rating')
             avaliable=validated_data.pop('avaliable')
             password=validated_data.pop('password')
@@ -89,7 +93,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Worker
-        fields = ("user_id", "jid", "password", "avg_rating", "avaliable"
+        fields = ("user_id", "password", "avg_rating", "avaliable"
                     )
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -139,5 +143,13 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = (
-            "jib", "occupation"
+            "jid", "occupation"
+        )
+
+class WorkerJobSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Worker_Job
+        fields = (
+            "jid", "worker_id"
         )

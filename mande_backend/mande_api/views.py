@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -261,3 +261,62 @@ def compare_sha256(request):
         hashStr.update(str.encode())
         hexStr = hashStr.hexdigest()
         return Response({"answer": encrypted == hexStr}, status=status.HTTP_200_OK)
+
+# Método para listar todos los trabajos disponibles
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_jobs(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        jobs = Job.objects.all()
+        serializer = JobSerializer(jobs, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": True, "error_cause": "Only workers can view all jobs available!"}, status=status.HTTP_404_NOT_FOUND)
+
+# Método para que el trabajador registre un trabajo (job)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def register_job(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        # Se verifica que el trabajo al que quiere inscribirse el trabajador exista.
+        try:
+            job = Job.objects.get(occupation=request.data["occupation"])
+            reqBody = {
+                "jid": job.jid,
+                "worker_id": user.uid
+            }
+            serializer = WorkerJobSerializer(data=reqBody, many=False)
+            if serializer.is_valid():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Job.DoesNotExist:
+            # si el trabajo no existe se crea uno
+            serializer = JobSerializer(data=request.data, many=False)
+            if serializer.is_valid():
+                serializer.save()
+                reqBody = {
+                    "jid": serializer.data["jid"],
+                    "worker_id": user.uid
+                }
+                serializer_response = WorkerJobSerializer(data=reqBody, many=False)
+                if serializer_response.is_valid():
+                    return Response(serializer_response.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({"error": True, "error_cause": "Only workers can view all jobs available!"}, status=status.HTTP_404_NOT_FOUND)

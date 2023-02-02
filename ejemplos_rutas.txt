@@ -119,7 +119,6 @@ Para actualizar la informacion de un trabajador:
 {
     "password": "123",
     "avg_rating": "0.00",
-    "jid": null,
     "avaliable": true
 }
 
@@ -131,3 +130,17 @@ Para actualizar la informacion de un cliente:
 {
     "phone": "1924182920"
 }
+
+------------------------------------------------------------------
+-- mande/compare/encoded
+------------------------------------------------------------------
+Se debe de autenticar el usuario con un token.
+
+{
+    "encrypted": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "str": "123"
+}
+
+------------------------------------------------------------------
+-- mande/compare/encoded
+------------------------------------------------------------------
