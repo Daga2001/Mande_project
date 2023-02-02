@@ -301,7 +301,7 @@ def get_all_jobs(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def register_job(request):
     try:
         user = User.objects.get(uid=request.data["uid"])
@@ -431,3 +431,10 @@ def request_service(request):
             return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         return Response({"error": True, "error_cause": 'Only clients can request a service!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Método para que un usuario se logee
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([AllowAny])
+def login_user(request):
+    reques
