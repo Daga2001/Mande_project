@@ -24,7 +24,7 @@ Para crear un trabajador:
 	"address_id": "56",
     "password": "123",
 	"avg_rating": "0",
-	"avaliable": true
+	"available": true
 }
 
 ------------------------------------------------------------------
@@ -119,7 +119,7 @@ Para actualizar la informacion de un trabajador:
 {
     "password": "123",
     "avg_rating": "0.00",
-    "avaliable": true
+    "available": true
 }
 
 ------------------------------------------------------------------

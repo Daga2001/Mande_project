@@ -60,7 +60,12 @@ def get_workers(request, jobid):
     if user.type == "Client":
         trabajadores = Worker_Job.objects.filter(jid=jobid)
         serializer = WorkerJobSerializerDetailedWorker(trabajadores, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # se filtran a los trabajadores disponibles
+        workersAvailable = []
+        for worker in serializer.data:
+            if worker["worker"]["available"]:
+                workersAvailable.append(worker)
+        return Response(workersAvailable, status=status.HTTP_200_OK)
     else: 
         return Response({"error": True}, status=status.HTTP_401_UNAUTHORIZED)
 

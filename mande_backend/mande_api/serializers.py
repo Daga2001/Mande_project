@@ -177,5 +177,5 @@ class WorkerJobSerializerDetailedWorker(serializers.ModelSerializer):
     class Meta:
         model = Worker_Job
         fields = (
-            "worker", "price", "worker_id"
+            "worker", "price", "jid"
         )
