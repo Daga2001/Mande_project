@@ -50,7 +50,9 @@ urlpatterns = [
     path('mande/paymentMethod/register',
     views.register_payment_method, name="reg_pay_method"),
     path('mande/paymentMethod/view',
-    views.view_my_payment_method, name="reg_pay_method"),
+    views.view_my_payment_method, name="view_pay_method"),
+    path('mande/service/request',
+    views.request_service, name="req_service"),
 ]
 
 

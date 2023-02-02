@@ -179,3 +179,12 @@ class WorkerJobSerializerDetailedWorker(serializers.ModelSerializer):
         fields = (
             "worker", "price", "jid"
         )
+
+class ServiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Service
+        fields = (
+            "sid", "rating", "description", "client_id", "worker_id", 
+            "jid", "card_num"
+        )

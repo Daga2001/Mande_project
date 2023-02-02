@@ -44,8 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Gps_location(models.Model):
     uid=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True,related_name="user_id_gps")
-    latitude=models.CharField(max_length=100)
-    longitude=models.CharField(max_length=100)
+    latitude=models.DecimalField(null=True, max_digits=50, decimal_places=20)
+    longitude=models.DecimalField(null=True, max_digits=50, decimal_places=20)
 
 class Job(models.Model):
     jid = models.AutoField(primary_key=True)
@@ -106,7 +106,7 @@ class Worker_Job(models.Model):
 class Service(models.Model):
     sid=models.AutoField(primary_key=True)
     rating=models.DecimalField(null=True, max_digits=5, decimal_places=2)
-    descrpition=models.CharField(max_length=500, null=True)
+    description=models.CharField(max_length=500, null=True)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_service")
     worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_service")
     jid=models.ForeignKey(Job,on_delete=models.CASCADE,related_name="jid_service")

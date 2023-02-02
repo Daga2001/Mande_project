@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -394,4 +394,27 @@ def view_my_payment_method(request):
     else:
         return Response({"error": True, "error_cause": "User hasn't registered payment methods!"}, status=status.HTTP_404_NOT_FOUND)
 
-# Método para
+# Método para que un cliente pueda solicitar un servicio
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def request_service(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Client":
+        request.data["rating"] = None
+        hashedNum = hashlib.sha256()
+        hashedNum.update(request.data["card_num"].encode())
+        hexNum = hashedNum.hexdigest()
+        request.data["card_num"] = hexNum
+        serializer = ServiceSerializer(data=request.data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({"error": True, "error_cause": 'Only clients can request a service!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
