@@ -9,6 +9,9 @@ import ServicesProvided from "./pages/servicesProvided/ServicesProvided";
 import ServiceInformation from "./pages/serviceInformation/ServiceInformation";
 import ServiceRequest from "./pages/serviceRequest/ServiceRequest";
 import Orders from "./pages/orders/Orders";
+import WorkerHome from "./pages/workerHome/WorkerHome";
+import WorkerProfile from "./pages/workerProfile/WorkerProfile";
+import WorkerOrders from "./pages/workerOrders/WorkerOrders";
 import Sidebar from "./components/sidebar/Sidebar";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./style/theme";
@@ -37,6 +40,12 @@ function App() {
                   <Route path="services/info" element={<ServiceInformation/>} />
                   <Route path="services/request" element={<ServiceRequest/>} />
                   <Route path="orders" element={<Orders />} />
+                  <Route path="orders" element={<Orders />} />
+                </Route>
+                <Route path="worker">
+                  <Route path="home" element={<WorkerHome />} />
+                  <Route path="profile" element={<WorkerProfile />} />
+                  <Route path="orders" element={<WorkerOrders />} />
                 </Route>
               </Route>
             </Routes>

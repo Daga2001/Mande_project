@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
-const FormProfile = () => {
+const FormWorkerProfile = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
   const [t, i18n] = useTranslation("registration");
+  const [average, setAverage] = useState(4.4);
 
   const handleFormSubmit = (values) => {
     console.log(values);
@@ -39,7 +40,7 @@ const FormProfile = () => {
   });
 
   return (
-    <Grid paddingRight={'auto'} item xs={12} sm={12} md={12} lg={7} xl={7} >
+    <Grid item xs={12} sm={12} md={12} lg={7} xl={7}>
       <Box
         height={isNonMobile ? "calc(100vh - 70px)" : "100%"}
         padding={"30px"}
@@ -177,19 +178,10 @@ const FormProfile = () => {
                     helperText={touched.password && errors.password}
                     sx={{ gridColumn: "span 3" }}
                   />
-                  <TextField
-                    fullWidth
-                    variant="filled"
-                    type="method"
-                    label={"Método de pago"}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.method}
-                    name="method"
-                    error={!!touched.method && !!errors.method}
-                    helperText={touched.method && errors.method}
-                    sx={{ gridColumn: "span 3" }}
-                  />
+                  <Typography>
+                    Calificación
+                    <Rating value={average} precision={0.1} readOnly size="large"/>
+                  </Typography>
                 </Box>
                 <Box display="flex" justifyContent="end" mt="20px">
                   <Button
@@ -220,4 +212,4 @@ const initialValues = {
   password: "",
 };
 
-export default FormProfile;
+export default FormWorkerProfile;

@@ -1,23 +1,23 @@
 import { Box } from "@mui/material";
-import Sidebar from "../../components/sidebar/Sidebar";
+import WorkerSidebar from "../../components/sidebar/WorkerSidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Header from "../../components/header/Header";
-import FormProfile from "./FormProfile";
+import FormWorkerProfile from "./FormWorkerProfile";
 import CardUser from "../../components/cardUser/CardUser";
 import Grid from "@mui/material/Grid";
 
-const Profile = () => {
+const WorkerProfile = () => {
   return (
     <Box display={"flex"}>
-      <Sidebar />
+      <WorkerSidebar />
       <Box width={"100%"}>
         <Topbar />
         <Header title={"Perfil"} subtitle={"Tu perfil"} />
         <Box height={"100%"} width={"100%"} display={"flex"}>
           <Grid>
-            <FormProfile />
+            <FormWorkerProfile />
           </Grid>
-          <Grid sx={{maxWidth: '400px'}}>
+          <Grid>
             <CardUser/>
           </Grid>
         </Box>
@@ -26,4 +26,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default WorkerProfile;

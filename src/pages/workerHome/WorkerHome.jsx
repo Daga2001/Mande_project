@@ -1,20 +1,18 @@
 import { Box } from "@mui/material";
-import Sidebar from "../../components/sidebar/Sidebar";
+import WorkerSidebar from "../../components/sidebar/WorkerSidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Header from "../../components/header/Header";
-import TableOrders from './TableOrders'
 
-const Orders = () => {
+const WorkerHome = () => {
   return (
     <Box display={"flex"}>
-      <Sidebar />
+      <WorkerSidebar />
       <Box width={"100%"}>
         <Topbar />
-        <Header title={"Pedidos"} subtitle={"Historial de Pedidos"} />
-        <TableOrders/>
+        <Header title={"Home"} subtitle={"Esta es la página principal"}/>
       </Box>
     </Box>
   );
 };
 
-export default Orders;
+export default WorkerHome;
