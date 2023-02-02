@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer, tokenSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -226,6 +226,10 @@ def update_worker_cli(request, type):
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Client" and type == "client":
         request.data["user"] = user
+        hashedPhone = hashlib.sha256()
+        hashedPhone.update(request.data["phone"].encode())
+        hexPhone = hashedPhone.hexdigest()
+        request.data["phone"] = hexPhone
         try:
             client = Client.objects.get(user=user)
         except Client.DoesNotExist:
@@ -240,11 +244,10 @@ def update_worker_cli(request, type):
             return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif user.type == "Worker" and type == "worker":
         request.data["user"] = user
-        password = request.data["password"]
         hashedPass = hashlib.sha256()
-        hashedPass.update(password.encode())
-        fPass = hashedPass.hexdigest()
-        request.data["password"] = fPass
+        hashedPass.update(request.data["password"].encode())
+        hexPass = hashedPass.hexdigest()
+        request.data["password"] = hexPass
         try:
             worker = Worker.objects.get(user=user)
         except Worker.DoesNotExist:
@@ -433,8 +436,33 @@ def request_service(request):
         return Response({"error": True, "error_cause": 'Only clients can request a service!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Método para que un usuario se logee
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([AllowAny])
 def login_user(request):
-    reques
+    try:
+        user = User.objects.get(email=request.data["email"])
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Client":
+        hashedPhone = hashlib.sha256()
+        hashedPhone.update(request.data["phone"].encode())
+        hexPhone = hashedPhone.hexdigest()
+
+        print("user:",request.data)
+        try:
+            client = Client.objects.get(phone = hexPhone)
+            token = Token.objects.get(user_id=user.uid)
+            return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"answer": False, "description": 'Client does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    elif user.type == "Worker":
+        hashedPassword = hashlib.sha256()
+        hashedPassword.update(request.data["password"].encode())
+        hexPassword = hashedPassword.hexdigest()
+        try:
+            worker = Worker.objects.get(password = hexPassword)
+            token = Token.objects.get(user_id=user.uid)
+            return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"answer": False, "description": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)

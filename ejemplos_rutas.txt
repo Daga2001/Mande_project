@@ -203,3 +203,18 @@ Se requiere autenticacion del cliente.
 	"jid": "2",
 	"card_num": "123123321"
 }
+
+------------------------------------------------------------------
+-- mande/user/login
+------------------------------------------------------------------
+Para logearse como cliente:
+{
+    "email": "falc5@colombia.com",
+    "phone": "1924182920"
+}
+
+Para logearse como trabajador:
+{
+    "email": "falcao49@colombia.com",
+    "password": "12345"
+}

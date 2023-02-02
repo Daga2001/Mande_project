@@ -55,8 +55,8 @@ urlpatterns = [
     views.view_my_payment_method, name="view_pay_method"),
     path('mande/service/request',
     views.request_service, name="req_service"),
-    path('mande/service/request',
-    views.request_service, name="req_service"),
+    path('mande/user/login',
+    views.login_user, name="req_service"),
 ]
 
 
