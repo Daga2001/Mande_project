@@ -74,9 +74,9 @@ def get_workers(request, jobid):
 @api_view(['POST', 'PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([AllowAny])
-def upload_images(request,id):
+def upload_images(request):
     try:
-        user = User.objects.get(uid=id)
+        user = User.objects.get(uid=request.data["uid"])
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if request.method == "POST":
@@ -180,6 +180,7 @@ def update_location_usr(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def view_location_usr(request, usrid):
+
     location = Gps_location.objects.get(pk=usrid)
     serializer = GpsLocationSerializer(location, many=False)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -301,7 +302,7 @@ def get_all_jobs(request):
 @permission_classes([IsAuthenticated])
 def register_job(request):
     try:
-        user = Token.objects.get(key=request.auth.key).user
+        user = User.objects.get(uid=request.data["uid"])
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Worker":

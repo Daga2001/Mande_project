@@ -53,7 +53,7 @@ Para crear un trabajador:
 se requiere token para autenticar al cliente.
 
 ------------------------------------------------------------------
--- /mande/images/upload/<id del usuario>/
+-- /mande/images/upload/
 ------------------------------------------------------------------
 se requiere token para autenticar al cliente o trabajador.
 
@@ -63,7 +63,7 @@ se debe crear un formdata con esta estructura:
 const body = new FormData();
 body.append("idc_img_data", imagenes[i], imagenes[i].idc);
 body.append("prof_img_data", imagenes[i], imagenes[i].prof); 
-body.append("worker_id", worker_id); // se puede extraer del contexto
+body.append("uid", ID_DEL_USUARIO);
 
 para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
 
@@ -72,6 +72,7 @@ se debe crear un formdata con esta estructura:
 
 const body = new FormData();
 body.append("receipt_data", imagenes[i], imagenes[i].receipt);
+body.append("uid", ID_DEL_USUARIO);
 
 para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
 
@@ -154,8 +155,9 @@ debe de autenticarse el usuario como trabajador.
 para registrar un trabajo:
 
 {
-    "occupation": "Jugador de Roblox",
-    "price": 1293412
+    "occupation": "Jugador de Univalle",
+    "price": 1293412,
+    "uid": 1
 }
 
 ------------------------------------------------------------------

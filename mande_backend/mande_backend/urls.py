@@ -33,7 +33,7 @@ urlpatterns = [
     views.CreateAddress.as_view(), name="create_address"),
     path('mande/workers/view/<int:jobid>/', 
     views.get_workers, name="view_workers"),
-    path('mande/images/upload/<int:id>/', 
+    path('mande/images/upload', 
     views.upload_images, name="upload_img"),
     path('mande/job/create', 
     views.CreateJob.as_view(), name="create_job"),
