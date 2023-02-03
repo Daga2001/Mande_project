@@ -549,6 +549,27 @@ def view_history(request):
     else:
         return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# Método para que un trabador o cliente pueda leer en detalle un servicio prestado
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def reject_service(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        try:
+            service = Service.objects.get(sid=request.data["sid"], worker_id=user.uid) 
+            service.delete()
+            return Response({"detail": "The service was successfully removed!"}, status=status.HTTP_404_NOT_FOUND)
+        except Service.DoesNotExist:
+            return Response({"error": True, "error_cause": "This service doesn't exist!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({"error": True, "error_cause": "Only workers can reject services!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 # Método para registrar un servicio en el historial del cliente
 
 @api_view(['POST'])

@@ -116,5 +116,5 @@ class History(models.Model):
     hid=models.AutoField(primary_key=True)
     amount=models.DecimalField(null=False,  max_digits=30, decimal_places=2)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_history")
-    sid=models.ForeignKey(Service,on_delete=models.CASCADE,related_name="sid_history")
+    sid=models.OneToOneField(Service,on_delete=models.CASCADE,related_name="sid_history")
 
