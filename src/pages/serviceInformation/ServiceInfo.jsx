@@ -96,7 +96,7 @@ const ServiceInfo = ( {type} ) => {
                         {jid: location.state?.jid, 
                           title:location.state?.title, 
                           description:location.state?.description,
-                          sid: params.row.id,
+                          wid: params.row.id,
                           nombre:params.row.nombre,
                           distancia:params.row.distancia,
                           precio:params.row.precio,

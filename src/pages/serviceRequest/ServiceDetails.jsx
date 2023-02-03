@@ -13,6 +13,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
 import { Context } from "../../context/Context";
+import { minHeight } from "@mui/system";
 
 const ServiceDetails = () => {
     const theme = useTheme();
@@ -26,7 +27,9 @@ const ServiceDetails = () => {
     const [fechaExpiracion,setFechaExpiracion] = useState("");
     const [cvv, setCvv] = useState(0);
     const [correo,setCorreo] = useState("")
-    const [sid,setSID] = useState("")
+    const [id,setID] = useState(0)
+    const [dataService,setDataService] = useState("")
+
     const headerToken = {
         headers: {
           Authorization: window.localStorage.loginUser,
@@ -48,6 +51,9 @@ const ServiceDetails = () => {
     const handleChangeCvv = (event) => {
         setCvv(event.target.value);
     };
+    const handleChangeDesc = (event) => {
+        setDescripcion(event.target.value);
+    }
     
     const validateData = async () => {
         const config = {
@@ -66,41 +72,62 @@ const ServiceDetails = () => {
           console.log (data)
     }
 
-    const obtenerCorreo = async() => {
+    const obtenerDatos = async() => {
         const config = headerToken;
         const link = "http://127.0.0.1:8000/mande/user/view"
         const response=await fetch(link,config)
         const data = await response.json()
         setCorreo(data.user.email)
+        setID(data.user.uid)
     }
 
     const enviarCorreo = async() => {
         const config = {
             method: 'POST',
             headers: headerToken.headers,
-            body: JSON.stringify({"sid":1})
+            body: JSON.stringify({"sid":dataService})
           }
           const link="http://127.0.0.1:8000/mande/user/notify"
           const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+    }
 
+    const crearServicio = async() => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({
+                "description":descripcion,
+                "client_id":id,
+                "worker_id":location.state?.wid,
+                "jid":location.state?.jid,
+                "card_num":numeroTarjeta
+            })
+          }
+          const link="http://127.0.0.1:8000/mande/service/request"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+          setDataService(data.sid)
     }
 
     const handleClick = () => {
         if (validateData())
         {
-            setSID(location.state?.sid)
-            obtenerCorreo()
+            obtenerDatos()
+            crearServicio()
             enviarCorreo()
+            navigate("../home")
         }
-        else{
-           
-        }
-        
+        else{ 
+        }   
     }
 
   return (
     <div>
         <Header title={"Contratar Servicio"}/>
+        <h2> {location.state?.wid}</h2>
         <div className="serviceinfo">
             <Grid container direction="row" spacing={1} wrap='nowrap' >
                 <Grid container direction="row" spacing = {1} wrap='nowrap' xs={12} sm={12} md={12} lg={7} xl={7}>
@@ -125,15 +152,15 @@ const ServiceDetails = () => {
                         <h2> Paso Final</h2>
                         </Grid>
                         <Grid item>
-                            <p> Precio hora: 1000% </p>
+                            <p>Precio Final: {location.state?.precio}</p>
                         </Grid>
                         <Grid item>
-                            <p> Añada una descripción al favor a realizar </p>
+                            <h2>Colocar descripcion del Servicio</h2>
                         </Grid>
-                        <Grid item >
-                        <FormControl fullWidth gap="30px" >
-                            <TextField value={descripcion} onChange={handleChange} id="descripcion" variant="filled"/>
-                        </FormControl>
+                        <Grid item>
+                            <FormControl fullWidth gap="30px">
+                                <TextField value={descripcion} onChange={handleChangeDesc} label="Descripcion" variant="filled"/>
+                            </FormControl>
                         </Grid>
                         <Grid item>
                             <p> Añada la información de la tarjeta</p>
