@@ -370,10 +370,10 @@ def get_my_jobs(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def register_payment_method(request):
     try:
-        user = Token.objects.get(key=request.auth.key).user
+        user = User.objects.get(uid=request.data["uid"])
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     serializer = PaymentMethodSerializer()
