@@ -532,5 +532,4 @@ def read_detailed_service(request):
         else:
             return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_404_NOT_FOUND)
     
-
-        
+# Método para

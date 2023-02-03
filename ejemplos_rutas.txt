@@ -218,3 +218,17 @@ Para logearse como trabajador:
     "email": "falcao49@colombia.com",
     "password": "12345"
 }
+
+------------------------------------------------------------------
+-- mande/user/view
+------------------------------------------------------------------
+Solo requiere del token del usuario para conocer su información.
+
+------------------------------------------------------------------
+-- mande/service/view
+------------------------------------------------------------------
+se requiere de autenticación por token.
+
+{
+    "sid": "1"
+}
