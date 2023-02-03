@@ -761,3 +761,38 @@ def validate_card(request):
         return Response({"answer": True, "detail": 'Valid payment method!'}, status=status.HTTP_404_NOT_FOUND)
     except Payment_Method.DoesNotExist:
         return Response({"answer": False, "detail": 'Invalid payment method!'}, status=status.HTTP_404_NOT_FOUND)
+    
+# Método para validar los datos ingresados de una tarjeta.
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_profile_img(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        image = Worker_img_data.objects.filter(worker_id=user.uid)
+        serializer = WorkerImgSerializer(image, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": True, "error_cause": 'Only workers can have profile image!'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+# Método para validar los datos ingresados de una tarjeta.
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_client_in_service(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        service = Service.objects.filter(sid = request.data["sid"])
+        serializer = ServiceSerializerDetailed(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": True, "error_cause": 'Only workers allowed!'}, status=status.HTTP_404_NOT_FOUND)
