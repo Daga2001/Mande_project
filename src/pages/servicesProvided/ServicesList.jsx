@@ -26,6 +26,7 @@ const ServicesList = ( {type} ) => {
       const response=await fetch(link,config)
       const data = await response.json()
       setDatosTrabajo(data)
+      console.log("data:", data)
     }
 
     const handleClick= (value) => {
