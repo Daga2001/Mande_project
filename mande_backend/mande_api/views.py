@@ -640,8 +640,11 @@ def send_email(request):
     # Setup the MIME
     message = MIMEMultipart()
 
+
     sender = 'pruebapruebas205'
     password = 'onupdrtfvpvvhasr'
+    # sender = 'mande_team'
+    # password = 'p7QMAgejy5^IX5BjIJ^B%4Y3&o9IN05gnLzau364kxCCFeyeZd'
 
     if user.type == "Client":
         message['Subject'] = "Nueva solicitud de trabajo"
@@ -680,6 +683,8 @@ def send_email(request):
 
     # use gmail with port
     session = smtplib.SMTP('smtp.gmail.com', 587)
+    # session = smtplib.SMTP("smtp.live.com",587)
+
     # enable security
     session.starttls()
 
@@ -716,7 +721,7 @@ def update_service(request):
 
 # Método para validar los datos ingresados de una tarjeta.
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def validate_card(request):
