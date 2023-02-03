@@ -64,6 +64,9 @@ def get_workers(request, jobid):
         workersAvailable = []
         for worker in serializer.data:
             if worker["worker"]["available"]:
+                user = User.objects.get(uid=worker["worker"]["user_id"])
+                serializer_user = UserSerializer(user, many=False)
+                worker["user"] = serializer_user.data
                 workersAvailable.append(worker)
         return Response(workersAvailable, status=status.HTTP_200_OK)
     else: 
