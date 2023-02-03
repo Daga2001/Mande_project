@@ -1,18 +1,12 @@
 import React from 'react';
-import {
-  Box,
-  Button, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableContainer, 
-  TablePagination,
-  TableRow,
-  Paper} from '@mui/material';
+import {Box,Button, Table, TableBody, TableCell, TableHead, TableContainer, TablePagination,TableRow,Paper} from '@mui/material';
+  import { useState, useEffect } from "react";
+  import {  headerToken } from "../../data/headertoken";
+  import { useNavigate, useLocation } from "react-router-dom";
 
-const TableOrders = () => {
+const TableOrders = ( {type} ) => {
 
+  const navigate = useNavigate()
   const columns = [
     { id: 'id', label: 'ID', minWidth: 50 },
     { id: 'servicio', label: 'Servicio Prestado', minWidth: 100 },
@@ -40,7 +34,10 @@ const TableOrders = () => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
+
+  const handleClick= (value) => {
+    navigate("../service", {state: {sid:value.id , title:value.servicio}});
+  }
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
@@ -80,7 +77,7 @@ const TableOrders = () => {
                   <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.aceptado}</TableCell>
                   <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.terminado}</TableCell>
                   <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>
-                    <Button variant='contained' type='submit'>
+                    <Button variant='contained' onClick={() => handleClick(row)}>
                       Ver
                     </Button>
                   </TableCell>

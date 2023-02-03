@@ -41,7 +41,6 @@ function App() {
                   <Route path="services/info" element={<ServiceInformation/>} />
                   <Route path="services/request" element={<ServiceRequest/>} />
                   <Route path="orders" element={<Orders />} />
-                  <Route path="orders" element={<Orders />} />
                 </Route>
                 <Route path="worker">
                   <Route path="home" element={<WorkerHome />} />

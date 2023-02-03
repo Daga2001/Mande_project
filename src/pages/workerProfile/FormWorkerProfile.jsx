@@ -7,18 +7,80 @@ import TopbarLandingPage from "../../components/topbarLandingPage.jsx/TopbarLand
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+//import {  headerToken } from "../../data/headertoken";
 
-const FormWorkerProfile = () => {
+const FormWorkerProfile = ( {type} ) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
   const [t, i18n] = useTranslation("registration");
-  const [average, setAverage] = useState(4.4);
+  const [average, setAverage] = useState();
+  const [info,setInfo] = useState([])
+  const headerToken = {
+    headers: {
+      Authorization: `Token bacbeb47fe753e75eeaf60115fbcd7a19dd2c901`,
+      "Content-type": "application/json",
+    },
+  };
+  const obtenerDatos=async () => {
+    const config=headerToken;
+    const link="http://127.0.0.1:8000/mande/user/view"
+    const response= await fetch(link,config)
+    const data = await response.json()
+    setInfo(
+      { f_name:data.user.f_name,
+        l_name:data.user.l_name,
+        uid:data.user.uid,
+        birth_dt:data.user.birth_dt,
+        address_id:data.user.address_id,
+        email:data.user.email,
+        password:data.user.password,
+      })
+    setAverage(data.avg_rating)
+  }
+
+  const guardarDatosUser = async () => {
+    const config = {
+      method: 'PUT',
+      headers:headerToken.headers,
+      body:JSON.stringify({
+        "password":info.password,
+        "uid":info.uid, 
+        "f_name":info.f_name, 
+        "l_name":info.l_name, 
+        "birth_dt":info.birth_dt, 
+        "email":info.email, 
+        "address_id":info.address_id,
+      })
+    }
+    const link="http://127.0.0.1:8000/mande/user/update"
+    const response = await fetch(link,config)
+    const data= await response.json();
+    console.log(data)
+  }
+
+  useEffect(() => {
+    obtenerDatos();
+  },[type]);
 
   const handleFormSubmit = (values) => {
-    console.log(values);
-    // navigate("/registration/page2")
+    setInfo(
+      {
+        f_name:values.firstName,
+        l_name:values.lastName,
+        uid:values.idNumber,
+        birth_dt:values.dateBird,
+        address_id:values.address,
+        email:values.email,
+        password: values.password
+      }
+    )
+    console.log(info)
+    guardarDatosUser()
+
   };
+  
+  
 
   const checkoutSchema = yup.object().shape({
     firstName: yup.string().required(t("registration1.error.require")),
@@ -26,10 +88,6 @@ const FormWorkerProfile = () => {
     email: yup
       .string()
       .email(t("registration1.error.invalid-email"))
-      .required(t("registration1.error.require")),
-    contact: yup
-      .string()
-      // .matches(phoneRegExp, "Phone number is not valid")
       .required(t("registration1.error.require")),
     address: yup.string().required(t("registration1.error.require")),
     password: yup
@@ -39,6 +97,16 @@ const FormWorkerProfile = () => {
     idNumber: yup.string().required(t("registration1.error.require")),
   });
 
+  const initialValues = {
+    firstName: info.f_name,
+    lastName: info.l_name,
+    idNumber: info.uid,
+    dateBird: info.birth_dt,
+    address: info.address_id,
+    email: info.email,
+    password: info.password,
+  };
+
   return (
     <Grid item xs={12} sm={12} md={12} lg={7} xl={7}>
       <Box
@@ -46,6 +114,7 @@ const FormWorkerProfile = () => {
         padding={"30px"}
       >
         <Formik
+        enableReinitialize
           onSubmit={handleFormSubmit}
           initialValues={initialValues}
           validationSchema={checkoutSchema}
@@ -121,7 +190,7 @@ const FormWorkerProfile = () => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.dateBirth}
-                    name="lastName"
+                    name="dateBirth"
                     error={!!touched.dateBirth && !!errors.dateBirth}
                     helperText={touched.dateBirth && errors.dateBirth}
                     sx={{ gridColumn: "span 3" }}
@@ -155,19 +224,6 @@ const FormWorkerProfile = () => {
                   <TextField
                     fullWidth
                     variant="filled"
-                    type="text"
-                    label={t("registration1.number")}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.contact}
-                    name="contact"
-                    error={!!touched.contact && !!errors.contact}
-                    helperText={touched.contact && errors.contact}
-                    sx={{ gridColumn: "span 3" }}
-                  />
-                  <TextField
-                    fullWidth
-                    variant="filled"
                     type="password"
                     label={t("registration1.password")}
                     onBlur={handleBlur}
@@ -180,7 +236,7 @@ const FormWorkerProfile = () => {
                   />
                   <Typography>
                     Calificación
-                    <Rating value={average} precision={0.1} readOnly size="large"/>
+                    <Rating value={+average} precision={0.1} readOnly size="large"/>
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="end" mt="20px">
@@ -199,17 +255,6 @@ const FormWorkerProfile = () => {
       </Box>
     </Grid>
   );
-};
-
-const initialValues = {
-  firstName: "",
-  lastName: "",
-  idNumber: "",
-  dateBird: "",
-  address: "",
-  email: "",
-  contact: "",
-  password: "",
 };
 
 export default FormWorkerProfile;

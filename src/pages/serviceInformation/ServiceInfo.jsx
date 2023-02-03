@@ -19,26 +19,26 @@ const ServiceInfo = ( {type} ) => {
     const navigate = useNavigate();
     const location = useLocation();
     const context = useContext(Context);
-    const [datosServicios,setDatosServicios] = useState([])
+    const [listaTrabajadores,setListaTrabajadores] = useState([])
 
-    /*
-      const obtenerServicios=async () => {
+    const obtenerTrabajadores=async () => {
       const config=headerToken;
-      const link="http://127.0.0.1:8000/mande/client/view/service"
-      const response=await fetch(link,config)
+      const link="http://127.0.0.1:8000/mande/workers/view/"+location.state?.jid+"/"
+      const response= await fetch(link,config)
       const data = await response.json()
-      setDatosServicios(data)
+      setListaTrabajadores(data.map(e => (
+          {id:e.worker.user_id,
+          nombre:e.user.f_name+" "+e.user.l_name,
+          precio:e.price,
+          distancia:500,
+          promedio:e.worker.avg_rating}
+      )))
     }
 
+
     useEffect(() => {
-      obtenerServicios();
-      },[type]);
-    */
-    const rows = [
-        {id: 1, nombre: "Ejemplo", precio: 100, distancia: 1000, rating: 5},
-        {id: 2, nombre: "Ejemplo", precio: 100, distancia: 1000, rating: 4.5},
-        {id: 3, nombre: "Ejemplo", precio: 100, distancia: 1000, rating: 4.3},
-    ]
+      obtenerTrabajadores();
+    },[type]);
 
     const [rating, setRating] = useState(5);
     
@@ -70,7 +70,10 @@ const ServiceInfo = ( {type} ) => {
             renderCell: () =>{
               return(
                 <>
-                <Rating name="promedioEstrellas" precision={0.1} value={rating} readOnly/>
+                {listaTrabajadores.map(e => (
+                  <Rating name="promedioEstrellas" precision={0.1} value={+e.promedio} readOnly/>
+                ))}
+                
                 </>
               )
             }
@@ -84,7 +87,16 @@ const ServiceInfo = ( {type} ) => {
                     <>
                     <Button variant="contained" onClick={() => {
                       //console.log(params.row.id)
-                      navigate("../services/request", {state: {jid: location.state?.jid, sid: params.row.id}});
+                      navigate("../services/request", {state: 
+                        {jid: location.state?.jid, 
+                          title:location.state?.title, 
+                          description:location.state?.description,
+                          sid: params.row.id,
+                          nombre:params.row.nombre,
+                          distancia:params.row.distancia,
+                          precio:params.row.precio,
+                          rating:params.row.promedio
+                        }});
                     }}>
                      Ver
                      </Button>  
@@ -98,7 +110,7 @@ const ServiceInfo = ( {type} ) => {
   return (
     <div>
     <Header title={"Contratar Servicio"}/>
-    <h2> {location.state?.jid} </h2>
+    <h2>{listaTrabajadores.worker}</h2>
         <div className="serviceinfo">
             <Grid container direction="row" spacing = {1} wrap='nowrap' xs={12} sm={12} md={12} lg={7} xl={7}>
                 <Grid item>
@@ -107,13 +119,10 @@ const ServiceInfo = ( {type} ) => {
                 <Grid item>
                 <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="baseline">
                     <Grid item>
-                        <h2> Cuidador de Mascotas</h2>
+                        <h2> {location.state?.title} </h2>
                     </Grid>
                     <Grid item>
-                        <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod
-tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam,
-quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
+                        <p> {location.state?.description}</p>
                     </Grid>
                 </Grid>
             </Grid>
@@ -157,7 +166,7 @@ consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
             <h2> Trabajadores Disponibles </h2>
             <DataGrid
               // checkboxSelection
-              rows={rows}
+              rows={listaTrabajadores}
               columns={columns}
               components={{ Toolbar: GridToolbar }}
               pageSize={10}

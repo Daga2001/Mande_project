@@ -14,24 +14,30 @@ const ServicesList = ( {type} ) => {
     const [datosTrabajo,setDatosTrabajo] = useState([])
     const context = useContext(Context);
 
-    /*const obtenerTrabajos=async () => {
+    const obtenerTrabajos=async () => {
       const config = headerToken;
-      const link = "http://127.0.0.1:8000/mande/client/view/jobs"
+      const link = "http://127.0.0.1:8000/mande/jobs/view"
       const response=await fetch(link,config)
       const data = await response.json()
       setDatosTrabajo(data)
-    }*/
+    }
 
     const handleClick= (value) => {
-      navigate("./info", {state: {jid:value.jid}});
+      navigate("./info", {state: {jid:value.jid , title:value.occupation, description:value.j_description}});
     }
-    /*
+    
     useEffect(() => {
       obtenerTrabajos();
       },[type]);
-      */
 
-      /*{datosTrabajo.map( e => (
+  return (
+    
+    <div>
+    <Header title={"Servicios"} subtitle={"Servicios de la app"}/>
+    <div className="servicelist">
+        
+        <Grid container spacing = {10} alignItems="flex-start" >
+        {datosTrabajo.map( e => (
         <Grid item>
         <Box sx={{boxShadow:9}} className="boxcolor">
         <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="center" >
@@ -49,32 +55,7 @@ const ServicesList = ( {type} ) => {
       </Grid>
       </Box>
     </Grid> 
-      ))}*/
-
-  return (
-    
-    <div>
-    <Header title={"Servicios"} subtitle={"Servicios de la app"}/>
-    <div className="servicelist">
-        
-        <Grid container spacing = {10} alignItems="flex-start" >
-              <Grid item>
-                <Box sx={{boxShadow:9}} className="boxcolor">
-                <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="center" >
-                <Grid item>
-                    {<h2> Servicio de Mascotas </h2>}
-                </Grid>
-
-                <Grid item>
-                <img src={servicio1} height="150" width="150"/>
-                </Grid>
-
-                <Grid item> 
-                <Button variant="contained" onClick={handleClick(1)}> Ver servicio </Button>
-                </Grid>
-              </Grid>
-              </Box>
-            </Grid> 
+      ))}
         </Grid>
         
     </div>

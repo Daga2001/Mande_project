@@ -13,12 +13,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Context } from "../../context/Context";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
+import {  headerToken } from "../../data/headertoken";
 
 const ServiceDetails = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const context = useContext(Context);
     const navigate = useNavigate();
+    const location = useLocation();
     const [metodo,setMetodo] = useState('');
     const [show, setShow] = useState(true);
     const [show2, setShow2] = useState(false);
@@ -44,7 +46,7 @@ const ServiceDetails = () => {
                     <Grid item>
                     <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="baseline">
                         <Grid item>
-                            <h2> Cuidador de Mascotas</h2>
+                            <h2> {location.state?.title}</h2>
                         </Grid>
                         <Grid item>
                             <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod

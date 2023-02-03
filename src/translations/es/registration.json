@@ -12,7 +12,7 @@
     "profile-photo": "FOTO DE PERFIL",
     "id-photo": "FOTO DOC. ID",
     "bill-photo": "FOTO FACTURA",
-    "verify": "Verificar",
+    "verify": "Actualizar Datos",
     "error": {
       "require": "Requerido",
       "invalid-email": "Correo inválido",
