@@ -61,6 +61,10 @@ urlpatterns = [
     views.get_my_data, name="req_service"),
     path('mande/service/view',
     views.read_detailed_service, name="req_service"),
+    path('mande/history/create',
+    views.register_history, name="req_service"),
+    path('mande/history/view',
+    views.view_history, name="req_service"),
 ]
 
 

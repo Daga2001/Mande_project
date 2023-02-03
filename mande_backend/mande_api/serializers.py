@@ -200,3 +200,11 @@ class ServiceSerializerDetailed(serializers.ModelSerializer):
             "sid", "rating", "description", "client", "worker", 
             "job", "card_num"
         )
+
+class HistorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = History
+        fields = (
+            "hid", "amount", "client_id", "sid"
+        )
