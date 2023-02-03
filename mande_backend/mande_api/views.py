@@ -293,12 +293,12 @@ def get_all_jobs(request):
         user = Token.objects.get(key=request.auth.key).user
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    if user.type == "Worker":
+    if user.type == "Worker" or user.type == "Client":
         jobs = Job.objects.all()
         serializer = JobSerializer(jobs, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
-        return Response({"error": True, "error_cause": "Only workers can view all jobs available!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": True, "error_cause": "Invalid role!"}, status=status.HTTP_404_NOT_FOUND)
 
 # Método para que el trabajador registre un trabajo (job)
 
