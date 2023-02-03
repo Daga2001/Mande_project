@@ -510,10 +510,27 @@ def read_detailed_service(request):
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Client":
-        service = Service.objects.filter(client_id=user.uid)
+        service = Service.objects.filter(client_id=user.uid, sid = request.data["sid"])
         serializer = ServiceSerializerDetailed(service, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if len(serializer.data) > 0 :
+            try:
+                work_job = Worker_Job.objects.get(worker_id=serializer.data[0]["worker"]["user_id"], jid = serializer.data[0]["jid"])
+            except Worker_Job:
+                return Response({"error": True, "error_cause": "Worker doesn't offer this job!"}, status=status.HTTP_404_NOT_FOUND)
+            serializer.data[0]["price"] = work_job.price
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_404_NOT_FOUND)
     elif user.type == "Worker":
-        service = Service.objects.filter(worker_id=user.uid)
-        serializer = ServiceSerializerDetailed(service, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if len(serializer.data) > 0 :
+            try:
+                work_job = Worker_Job.objects.get(worker_id=user.uid, jid = serializer.data[0]["jid"])
+            except Worker_Job:
+                return Response({"error": True, "error_cause": "Worker doesn't offer this job!"}, status=status.HTTP_404_NOT_FOUND)
+            serializer.data[0]["price"] = work_job.price
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+        
