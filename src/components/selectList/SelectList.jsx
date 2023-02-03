@@ -6,20 +6,12 @@ import { useTranslation } from 'react-i18next';
 
 const currencies = [
   {
-    value: 'Campo1',
-    label: 'Valor1',
+    value: 'Credito',
+    label: 'Tarjeta de crédito',
   },
   {
-    value: 'Campo2',
-    label: 'Valor2',
-  },
-  {
-    value: 'Campo3',
-    label: 'Valor3',
-  },
-  {
-    value: 'Campo4',
-    label: 'Valor4',
+    value: 'Debito',
+    label: 'Tarjeta débito',
   },
 ];
 
@@ -40,7 +32,7 @@ export default function SelectTextFields() {
           id="outlined-select-currency"
           select
           label={t("registration2.no.title-input")}
-          defaultValue="Campo1"
+          defaultValue="Credito"
           // helperText="Please select your currency"
         >
           {currencies.map((option) => (
