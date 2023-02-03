@@ -59,6 +59,8 @@ urlpatterns = [
     views.login_user, name="req_service"),
     path('mande/user/view',
     views.get_my_data, name="req_service"),
+    path('mande/service/view',
+    views.read_detailed_service, name="req_service"),
 ]
 
 

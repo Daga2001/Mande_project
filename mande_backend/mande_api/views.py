@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer, ServiceSerializerDetailed
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -498,3 +498,22 @@ def get_my_data(request):
         return Response(reqData, status=status.HTTP_200_OK)
     else: 
         return Response({"error": True, "error_cause": 'Unauthorized role!'}, status=status.HTTP_404_NOT_FOUND)
+    
+# Método para que un trabador o cliente pueda leer en detalle un servicio prestado
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def read_detailed_service(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Client":
+        service = Service.objects.filter(client_id=user.uid)
+        serializer = ServiceSerializerDetailed(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif user.type == "Worker":
+        service = Service.objects.filter(worker_id=user.uid)
+        serializer = ServiceSerializerDetailed(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

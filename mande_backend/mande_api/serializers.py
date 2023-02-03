@@ -188,3 +188,14 @@ class ServiceSerializer(serializers.ModelSerializer):
             "sid", "rating", "description", "client_id", "worker_id", 
             "jid", "card_num"
         )
+
+class ServiceSerializerDetailed(serializers.ModelSerializer):
+    client = ClientSerializer(many=False, read_only=True, source="client_id")
+    worker = WorkerSerializer(many=False, read_only=True, source="worker_id")
+
+    class Meta:
+        model = Service
+        fields = (
+            "sid", "rating", "description", "client", "worker", 
+            "jid", "card_num"
+        )
