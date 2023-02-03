@@ -14,6 +14,7 @@ export default function ContextProvider({ children }) {
       trabajador: false,
     },
     roll: null,
+    name: null
   };
   const [appState, setAppState] = useState(data);
   return (
