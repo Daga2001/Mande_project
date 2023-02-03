@@ -457,10 +457,9 @@ def login_user(request):
         try:
             client = Client.objects.get(phone = hexPhone)
             token = Token.objects.get(user_id=user.uid)
-            serializer_user = UserSerializer(user, many=False)
             reqdata = {
                 "token": token.key,
-                "user": serializer_user.data
+                "user": user.type
             }
             return Response({"answer": True, "description": reqdata }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
@@ -472,10 +471,9 @@ def login_user(request):
         try:
             worker = Worker.objects.get(password = hexPassword)
             token = Token.objects.get(user_id=user.uid)
-            serializer_user = UserSerializer(user, many=False)
             reqdata = {
                 "token": token.key,
-                "user": serializer_user.data
+                "user": user.type
             }
             return Response({"answer": True, "description": reqdata }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
