@@ -124,9 +124,6 @@ const FormProfile = () => {
                     error={!!touched.dateBirth && !!errors.dateBirth}
                     helperText={touched.dateBirth && errors.dateBirth}
                     sx={{ gridColumn: "span 3" }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
                   />
                   <TextField
                     fullWidth
@@ -197,7 +194,7 @@ const FormProfile = () => {
                 <Box display="flex" justifyContent="end" mt="20px">
                   <Button
                     type="submit"
-                    sx={{ backgroundColor: "#03045e", color:"white" }}
+                    sx={{ backgroundColor: "#03045e" }}
                     variant="contained"
                   >
                     {t("registration1.verify")}

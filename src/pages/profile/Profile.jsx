@@ -8,26 +8,21 @@ import Grid from "@mui/material/Grid";
 
 const Profile = () => {
   return (
-    <>
-      <Box
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        width={"100%"}
-      >
-        <Sidebar />
-        <Box width={"100%"}>
-          <Topbar />
-          <Header title={"Perfil"} subtitle={"Tu perfil"} />
-          <Box height={"100%"} width={"100%"} display={"flex"}>
-            <Grid container>
-              <CardUser />
-              <FormProfile />
-            </Grid>
-          </Box>
+    <Box display={"flex"}>
+      <Sidebar />
+      <Box width={"100%"}>
+        <Topbar />
+        <Header title={"Perfil"} subtitle={"Tu perfil"} />
+        <Box height={"100%"} width={"100%"} display={"flex"}>
+          <Grid>
+            <FormProfile />
+          </Grid>
+          <Grid sx={{maxWidth: '400px'}}>
+            <CardUser/>
+          </Grid>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 
