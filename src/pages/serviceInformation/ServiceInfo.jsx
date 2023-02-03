@@ -1,27 +1,47 @@
-import { useContext, useEffect } from "react";
-import { Box, Grid, Button, IconButton, useTheme } from "@mui/material"
+import { useContext, useEffect,useState } from "react";
+import { Box, Grid, Button, IconButton, useTheme, Rating } from "@mui/material"
 import * as yup from "yup";
 import React from 'react';
 import servicio1 from '../../assets/Servicio1.png';
 import ver from '../../assets/ver.png';
 import Header from "../../components/header/Header";
 import "./ServiceInfo.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
-import { Context } from "../../context/ContextList";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar  } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
+import { Context } from "../../context/Context";
+import {  headerToken } from "../../data/headertoken";
 
-const ServiceInfo = () => {
+const ServiceInfo = ( {type} ) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const context = useContext(Context);
     const navigate = useNavigate();
+    const location = useLocation();
+    const context = useContext(Context);
+    const [datosServicios,setDatosServicios] = useState([])
+
+    /*
+      const obtenerServicios=async () => {
+      const config=headerToken;
+      const link="http://127.0.0.1:8000/mande/client/view/service"
+      const response=await fetch(link,config)
+      const data = await response.json()
+      setDatosServicios(data)
+    }
+
+    useEffect(() => {
+      obtenerServicios();
+      },[type]);
+    */
     const rows = [
-        {id: 1, nombre: "Ejemplo", precio: 100, distancia: 1000, promedio: 500},
-        {id: 2, nombre: "Ejemplo", precio: 100, distancia: 1000, promedio: 500},
-        {id: 3, nombre: "Ejemplo", precio: 100, distancia: 1000, promedio: 500},
+        {id: 1, nombre: "Ejemplo", precio: 100, distancia: 1000, rating: 5},
+        {id: 2, nombre: "Ejemplo", precio: 100, distancia: 1000, rating: 4.5},
+        {id: 3, nombre: "Ejemplo", precio: 100, distancia: 1000, rating: 4.3},
     ]
+
+    const [rating, setRating] = useState(5);
+    
     let columns=[
         {   
             field:"id",
@@ -46,7 +66,14 @@ const ServiceInfo = () => {
         {
             field:"promedio",
             headerName:"Promedio de estrellas",
-            width:300
+            width:300,
+            renderCell: () =>{
+              return(
+                <>
+                <Rating name="promedioEstrellas" precision={0.1} value={rating} readOnly/>
+                </>
+              )
+            }
         },
         {
             field: "accion",
@@ -55,22 +82,12 @@ const ServiceInfo = () => {
             renderCell: (params) => {
                 return(
                     <>
-            
-            <IconButton
-              onClick={() => {
-                // console.log(params.row)
-                context.setAppState({
-                  stateLogin: false,
-                  name: context.appState.name,
-                  temporalUser: { user: params.row, roll: type },
-                  dataUser: context.appState.dataUser,
-                });
-                navigate(url);
-              }}
-              aria-label="edit"
-            >
-              <EditIcon />
-            </IconButton>
+                    <Button variant="contained" onClick={() => {
+                      //console.log(params.row.id)
+                      navigate("../services/request", {state: {jid: location.state?.jid, sid: params.row.id}});
+                    }}>
+                     Ver
+                     </Button>  
                     </>
                 )
             } 
@@ -81,6 +98,7 @@ const ServiceInfo = () => {
   return (
     <div>
     <Header title={"Contratar Servicio"}/>
+    <h2> {location.state?.jid} </h2>
         <div className="serviceinfo">
             <Grid container direction="row" spacing = {1} wrap='nowrap' xs={12} sm={12} md={12} lg={7} xl={7}>
                 <Grid item>

@@ -12,6 +12,7 @@ import Orders from "./pages/orders/Orders";
 import WorkerHome from "./pages/workerHome/WorkerHome";
 import WorkerProfile from "./pages/workerProfile/WorkerProfile";
 import WorkerOrders from "./pages/workerOrders/WorkerOrders";
+import WorkerService from "./pages/workerService/WorkerService";
 import Sidebar from "./components/sidebar/Sidebar";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./style/theme";
@@ -46,6 +47,7 @@ function App() {
                   <Route path="home" element={<WorkerHome />} />
                   <Route path="profile" element={<WorkerProfile />} />
                   <Route path="orders" element={<WorkerOrders />} />
+                  <Route path="service" element={<WorkerService/>} />
                 </Route>
               </Route>
             </Routes>
