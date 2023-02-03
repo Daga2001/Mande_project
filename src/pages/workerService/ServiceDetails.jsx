@@ -1,11 +1,21 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Grid, Button, IconButton, useTheme, TextField, FormControl, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Button,
+  IconButton,
+  useTheme,
+  TextField,
+  FormControl,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import * as yup from "yup";
-import React from 'react';
-import servicio1 from '../../assets/Servicio1.png';
-import estrellafull from '../../assets/estrellafull.png';
-import estrella from '../../assets/estrella.png';
-import ver from '../../assets/ver.png';
+import React from "react";
+import servicio1 from "../../assets/Servicio1.png";
+import estrellafull from "../../assets/estrellafull.png";
+import estrella from "../../assets/estrella.png";
+import ver from "../../assets/ver.png";
 import Header from "../../components/header/Header";
 import "./ServiceDetails.scss";
 import { useNavigate, useLocation } from "react-router-dom";
