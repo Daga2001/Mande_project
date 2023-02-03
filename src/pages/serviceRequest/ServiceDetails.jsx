@@ -127,7 +127,6 @@ const ServiceDetails = () => {
   return (
     <div>
         <Header title={"Contratar Servicio"}/>
-        <h2> {location.state?.wid}</h2>
         <div className="serviceinfo">
             <Grid container direction="row" spacing={1} wrap='nowrap' >
                 <Grid container direction="row" spacing = {1} wrap='nowrap' xs={12} sm={12} md={12} lg={7} xl={7}>

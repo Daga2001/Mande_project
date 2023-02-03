@@ -17,9 +17,6 @@ const Profile = () => {
           <Grid>
             <FormProfile />
           </Grid>
-          <Grid sx={{maxWidth: '400px'}}>
-            <CardUser/>
-          </Grid>
         </Box>
       </Box>
     </Box>
