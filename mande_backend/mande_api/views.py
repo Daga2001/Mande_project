@@ -590,3 +590,25 @@ def register_history(request):
             return Response({"error": True, "error_cause": serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Método para actualizar la información de un trabajo en la BD
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_job(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Client" or user.type == "Worker":
+        job = Job.objects.get(jid=request.data["jid"])
+        serializer = JobSerializer(
+            job, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({"error": True, "error_cause": "Invalid role!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

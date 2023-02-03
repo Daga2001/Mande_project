@@ -67,8 +67,8 @@ urlpatterns = [
     views.register_history, name="req_service"),
     path('mande/history/view',
     views.view_history, name="req_service"),
-    path('mande/history/view',
-    views.view_history, name="req_service"),
+    path('mande/job/updateInfo',
+    views.update_job, name="req_service"),
 ]
 
 

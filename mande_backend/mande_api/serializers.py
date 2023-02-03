@@ -143,7 +143,7 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = (
-            "jid", "occupation"
+            "jid", "occupation", "j_description"
         )
 
 class WorkerJobSerializer(serializers.ModelSerializer):

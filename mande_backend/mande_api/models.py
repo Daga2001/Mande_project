@@ -50,6 +50,7 @@ class Gps_location(models.Model):
 class Job(models.Model):
     jid = models.AutoField(primary_key=True)
     occupation = models.CharField(max_length=200, null=False, unique=True)
+    j_description = models.CharField(max_length=200, null=True)
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
