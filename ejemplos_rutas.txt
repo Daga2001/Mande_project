@@ -232,3 +232,28 @@ se requiere de autenticación por token.
 {
     "sid": "1"
 }
+
+------------------------------------------------------------------
+-- mande/service/reject
+------------------------------------------------------------------
+Solo un trabajador puede rechazar un servicio, debe de autenticarse y
+mandar este cuerpo:
+
+{
+    "sid": "1"
+}
+
+------------------------------------------------------------------
+-- mande/history/create
+------------------------------------------------------------------
+El cliente debe de autenticarse y enviar este cuerpo:
+
+{
+	"amount": "1233211",
+	"sid": "2"
+}
+
+------------------------------------------------------------------
+-- mande/history/view
+------------------------------------------------------------------
+Solo basta con que el cliente se autentique.
