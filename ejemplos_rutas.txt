@@ -1,0 +1,292 @@
+Para hacer un fetch correctamente asegurense de enviar un JSON con
+la siguiente estructura dependiendo de la URL:
+------------------------------------------------------------------
+-- mande/user/create
+------------------------------------------------------------------
+Para crear un cliente:
+{
+	"type": "Client",
+	"f_name": "Radamel",
+	"l_name": "Falcao",
+	"email": "falc@colombia.com",
+	"birth_dt": "1990-01-01",
+	"address_id": "56",
+	"phone": "100509103"
+}
+
+Para crear un trabajador:
+{
+	"type": "Worker",
+	"f_name": "Radamel",
+	"l_name": "Falcao",
+	"email": "falca@colombia.com",
+	"birth_dt": "1990-01-01",
+	"address_id": "56",
+    "password": "123",
+	"avg_rating": "0",
+	"available": true
+}
+
+------------------------------------------------------------------
+-- mande/gpslocation/create
+------------------------------------------------------------------
+{
+	"uid": 1,
+	"latitude": "56.91381",
+	"longitude": "23.13991"
+}
+
+------------------------------------------------------------------
+-- mande/address/create
+------------------------------------------------------------------
+{
+	"house_id": "56",
+	"street": "23",
+	"city": "Cali",
+	"country": "Colombia",
+	"postal_code": "100006"
+}
+
+------------------------------------------------------------------
+-- mande/workers/view/<id de trabajo>/ (para ver todos los trabajadores disponibles como cliente)
+------------------------------------------------------------------
+se requiere token para autenticar al cliente.
+
+------------------------------------------------------------------
+-- /mande/images/upload/
+------------------------------------------------------------------
+se requiere token para autenticar al cliente o trabajador.
+
+--- Para subir imagenes como cliente:
+se debe crear un formdata con esta estructura:
+
+const body = new FormData();
+body.append("idc_img_data", imagenes[i], imagenes[i].idc);
+body.append("prof_img_data", imagenes[i], imagenes[i].prof); 
+body.append("uid", ID_DEL_USUARIO);
+
+para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
+
+--- Para subir imagenes como trabajador:
+se debe crear un formdata con esta estructura:
+
+const body = new FormData();
+body.append("receipt_data", imagenes[i], imagenes[i].receipt);
+body.append("uid", ID_DEL_USUARIO);
+
+para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
+
+------------------------------------------------------------------
+-- mande/gpslocation/update
+------------------------------------------------------------------
+Se debe de autenticar el usuario con un token.
+Si se quiere actualizar la ubicación de un usuario:
+
+{
+	"latitude": "56.913832",
+	"longitude": "23.139953"
+}
+
+Un usuario ya no tiene una ubicacion gps asociada, para facilitar la creacion y 
+modificacion de la misma se agregó un fk del usuario a la tabla gps_location.
+
+------------------------------------------------------------------
+-- mande/gpslocation/view
+------------------------------------------------------------------
+para que el usuario pueda ver su propia ubicacion:
+{
+    "uid": "1"
+}
+
+------------------------------------------------------------------
+-- mande/job/create
+------------------------------------------------------------------
+para crear un trabajo:
+
+{
+    "occupation": "Jugador de LOL"
+}
+
+------------------------------------------------------------------
+-- mande/user/update
+------------------------------------------------------------------
+Para actualizar la informacion de un usuario
+
+{
+	"f_name": "Radamel",
+	"l_name": "Falcao",
+	"birth_dt": "1990-01-03",
+	"email": "falc3@colombia.com",
+	"address_id": "56"
+}
+
+------------------------------------------------------------------
+-- mande/worker/update
+------------------------------------------------------------------
+Para actualizar la informacion de un trabajador:
+
+{
+    "password": "123",
+    "avg_rating": "0.00",
+    "available": true
+}
+
+------------------------------------------------------------------
+-- mande/client/update
+------------------------------------------------------------------
+Para actualizar la informacion de un cliente:
+
+{
+    "phone": "1924182920"
+}
+
+------------------------------------------------------------------
+-- mande/compare/encoded
+------------------------------------------------------------------
+Se debe de autenticar el usuario con un token.
+
+{
+    "encrypted": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "str": "123"
+}
+
+------------------------------------------------------------------
+-- mande/jobs/view
+------------------------------------------------------------------
+debe de autenticarse el usuario como trabajador.
+Para que pueda ver todos los trabajos disponibles
+
+------------------------------------------------------------------
+-- mande/worker/register/job
+------------------------------------------------------------------
+debe de autenticarse el usuario como trabajador.
+para registrar un trabajo:
+
+{
+    "occupation": "Jugador de Univalle",
+    "price": 1293412,
+    "uid": 1
+}
+
+------------------------------------------------------------------
+-- mande/worker/view/ownjobs
+------------------------------------------------------------------
+debe de autenticarse el usuario como trabajador.
+para ver los trabajos que le pertenecen.
+
+------------------------------------------------------------------
+-- mande/paymentMethod/register
+------------------------------------------------------------------
+requiere de autenticacion del usuario.
+para registrar un método de pago:
+{
+    "num": "123123321",
+    "type": "MasterCard",
+    "expiration_dt": "2032-12-31",
+    "cvv": "123"
+}
+
+------------------------------------------------------------------
+-- mande/paymentMethod/view
+------------------------------------------------------------------
+Solamente requiere autenticacion.
+
+------------------------------------------------------------------
+-- mande/service/request
+------------------------------------------------------------------
+Se requiere autenticacion del cliente.
+
+{
+	"description": "Quiero un jugador pro para que me ayude a subir a diamante rapido y pueda jugar un torneo de Freefire",
+	"client_id": "3",
+	"worker_id": "1",
+	"jid": "2",
+	"card_num": "123123321"
+}
+
+------------------------------------------------------------------
+-- mande/user/login
+------------------------------------------------------------------
+Para logearse como cliente:
+{
+    "email": "falc5@colombia.com",
+    "phone": "1924182920"
+}
+
+Para logearse como trabajador:
+{
+    "email": "falcao49@colombia.com",
+    "password": "12345"
+}
+
+------------------------------------------------------------------
+-- mande/user/view
+------------------------------------------------------------------
+Solo requiere del token del usuario para conocer su información.
+
+------------------------------------------------------------------
+-- mande/service/view
+------------------------------------------------------------------
+se requiere de autenticación por token.
+
+{
+    "sid": "1"
+}
+
+------------------------------------------------------------------
+-- mande/service/reject
+------------------------------------------------------------------
+Solo un trabajador puede rechazar un servicio, debe de autenticarse y
+mandar este cuerpo:
+
+{
+    "sid": "1"
+}
+
+------------------------------------------------------------------
+-- mande/history/create
+------------------------------------------------------------------
+El cliente debe de autenticarse y enviar este cuerpo:
+
+{
+	"amount": "1233211",
+	"sid": "2"
+}
+
+------------------------------------------------------------------
+-- mande/history/view
+------------------------------------------------------------------
+Solo basta con que el cliente se autentique.
+
+------------------------------------------------------------------
+-- mande/job/updateInfo
+------------------------------------------------------------------
+Se requiere de autenticacion.
+{
+    "jid": 1,
+    "occupation": "Jugador de LOL",
+    "j_description": "Es un jugador sin vida social ni amigos que tiene serios problemas de autoestima :)"
+}
+
+------------------------------------------------------------------
+-- mande/service/info/update
+------------------------------------------------------------------
+Se requiere de autenticacion.
+{
+    "sid": 3,
+    "rating": null,
+    "status": "Pendiente",
+    "description": "Quiero un jugador pro para que me ayude a subir a diamante rapido y pueda jugar un torneo de Roblox",
+    "client_id": 3,
+    "worker_id": 1,
+    "jid": 2,
+    "card_num": "5f88134474eb05a9a3907d21b6263f85d63157bb4bfe6643f02b46f6a7c5b50b"
+}
+
+------------------------------------------------------------------
+-- mande/user/notify
+------------------------------------------------------------------
+Se requiere de autenticacion.
+{
+    "sid": "1"
+}

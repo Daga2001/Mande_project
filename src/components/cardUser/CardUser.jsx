@@ -1,8 +1,11 @@
 import Grid from "@mui/material/Grid";
-import { Box } from "@mui/material";
 import "./cardUser.scss"
+import React from 'react';
+import {Button, Card, CardHeader, CardContent, Avatar, Box, Typography} from '@mui/material';
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import profilepicture from '../../assets/profilepicture.png'
 
-const CardUser = () => {
+const CardWorker = () => {
   return (
     <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
       <div className="cardUser">
