@@ -644,9 +644,7 @@ def send_email(request):
     password = 'onupdrtfvpvvhasr'
 
     if user.type == "Client":
-        message['From'] = user.email
         message['Subject'] = "Nueva solicitud de trabajo"
-        message['To'] = service.worker_id.user.email
         body = '''
             Estimad@ {name} {lastName}.
 
@@ -662,9 +660,7 @@ def send_email(request):
         receiver = service.worker_id.user.email
 
     elif user.type == "Worker":
-        message['From'] = user.email
         message['Subject'] = "Respuesta del mande-trabajador"
-        message['To'] = service.client_id.user.email
         body = '''
             Estimad@ {name} {lastName}.
 
@@ -717,3 +713,34 @@ def update_service(request):
             return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     except Service.DoesNotExist:
         return Response({"error": True, "error_cause": "This service doesn't exist!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Método para validar los datos ingresados de una tarjeta.
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def validate_card(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+    try:
+        hashedNum = hashlib.sha256()
+        hashedNum.update(request.data["num"].encode())
+        hexNum = hashedNum.hexdigest()
+        request.data["num"] = hexNum
+        hashedCvv = hashlib.sha256()
+        hashedCvv.update(request.data["cvv"].encode())
+        hexCvv = hashedCvv.hexdigest()
+        request.data["cvv"] = hexCvv
+        card = Payment_Method.objects.get(
+            num = request.data["num"],
+            type = request.data["type"],
+            expiration_dt = request.data["expiration_dt"],
+            cvv = request.data["cvv"],
+            uid = user.uid,
+        )
+        return Response({"answer": True, "detail": 'Valid payment method!'}, status=status.HTTP_404_NOT_FOUND)
+    except Payment_Method.DoesNotExist:
+        return Response({"answer": False, "detail": 'Invalid payment method!'}, status=status.HTTP_404_NOT_FOUND)
