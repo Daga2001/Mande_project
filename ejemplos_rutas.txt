@@ -183,7 +183,8 @@ para registrar un método de pago:
     "num": "123123321",
     "type": "MasterCard",
     "expiration_dt": "2032-12-31",
-    "cvv": "123"
+    "cvv": "123",
+    "uid": 3
 }
 
 ------------------------------------------------------------------
@@ -289,4 +290,16 @@ Se requiere de autenticacion.
 Se requiere de autenticacion.
 {
     "sid": "1"
+}
+
+------------------------------------------------------------------
+-- mande/paymentMethod/validate
+------------------------------------------------------------------
+Se requiere de autenticacion.
+
+{
+    "num": "123123321",
+    "type": "MasterCard",
+    "expiration_dt": "2032-12-31",
+    "cvv": "123"
 }

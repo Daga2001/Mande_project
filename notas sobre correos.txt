@@ -1,0 +1,20 @@
+------------------------------------------------------------------
+-- sender
+------------------------------------------------------------------
+correo: 
+mande_team@hotmail.com
+contraseña:
+p7QMAgejy5^IX5BjIJ^B%4Y3&o9IN05gnLzau364kxCCFeyeZd
+
+------------------------------------------------------------------
+-- receivers
+------------------------------------------------------------------
+correo: 
+abc_electrica@hotmail.com
+contraseña:
+WxN5%yRfh6R%U@JEy^ym734FoSPAB0i6N#lvQxnm5^$jP3&VqE
+
+correo: 
+mande_radamelFalcao@hotmail.com
+contraseña:
+dM*B7Xw!tRF!vY1J6w%4eZr2Kw@Y@VnY&wdvrILDjrdn1NjYSB

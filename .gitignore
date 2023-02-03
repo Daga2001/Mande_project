@@ -1,1 +1,6 @@
 node_modules
+
+*.pyc
+mande_backend/mande_api/__pycache__/*.pyc
+mande_backend/mande_api/migrations/__pycache__/*.pyc
+mande_backend/mande_backend/__pycache__/*.pyc
