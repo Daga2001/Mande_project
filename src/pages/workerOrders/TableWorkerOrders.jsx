@@ -12,7 +12,7 @@ const TableOrders = ( {type} ) => {
   const columns = [
     { id: 'id', label: 'ID', minWidth: 50 },
     { id: 'servicio', label: 'Servicio Prestado', minWidth: 100 },
-    { id: 'estadoPago', label: 'Estado de Pago', minWidth: 100 },
+    { id: 'description', label: 'Comentario del cliente', minWidth: 100 },
     { id: 'aceptado', label: '¿Aceptado?', minWidth: 100 },
     { id: 'terminado', label: '¿Terminado?', minWidth: 100 },
     { id: 'accion', label: 'Acción', minWidth: 75 },
@@ -53,14 +53,23 @@ const TableOrders = ( {type} ) => {
     const datos = await utils.consultarHistorial(config);
     console.log("datos:", datos)
 
+    let isFinished = (datos, i) => {
+      if(datos[i].service.rating=="Terminado") {
+        return "Si"
+      }
+      else {
+        return "No"
+      }
+    }
+
     let datosProcesados = []
     for (let i = 0; i < datos.length; i++) {
       datosProcesados.push({
         id: datos[i].hid,                                                                                                                                                                                                                                                                                                         
         servicio: datos[i].job,
         description: datos[i].service.description,
-        estadoServicio: datos[i].service.status,
-        calificacion: datos[i].service.rating,
+        aceptado: datos[i].service.status,
+        terminado: isFinished(datos, i),
       })
     }
     console.log("datos2:", datosProcesados)
@@ -124,7 +133,7 @@ const TableOrders = ( {type} ) => {
                     <TableRow key = {row.id}>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.id}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.servicio}</TableCell>
-                      <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.estadoPago}</TableCell>
+                      <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.description}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.aceptado}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.terminado}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>

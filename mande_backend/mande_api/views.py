@@ -559,6 +559,15 @@ def view_history(request):
         history = History.objects.filter(client_id=user.uid)
         serializer = HistorySerializerDetailed(history, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    elif user.type == "Worker":
+        services_worker = Service.objects.filter(worker_id=user.uid)
+        history_data = []
+        for service in services_worker:
+            history = History.objects.filter(sid=service.sid)
+            serializer = HistorySerializerDetailed(history, many=True)
+            for data in serializer.data:
+                history_data.append(data)
+        return Response(history_data, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
