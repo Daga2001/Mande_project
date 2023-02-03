@@ -18,7 +18,7 @@ const TableOrders = () => {
   const columns = [
     { id: 'id', label: 'ID', minWidth: 50 },
     { id: 'servicio', label: 'Servicio Prestado', minWidth: 100 },
-    { id: 'estadoPago', label: 'Estado de Pago', minWidth: 100 },
+    { id: 'description', label: 'Comentarios del cliente', minWidth: 300 },
     { id: 'estadoServicio', label: 'Estado del Servicio', minWidth: 150 },
     { id: 'calificacion', label: 'Calificación', minWidth: 100 },
   ];
@@ -27,13 +27,13 @@ const TableOrders = () => {
     return {id, servicio, estadoPago, estadoServicio, calificacion};
   }
 
-  const mockdata = [
-    createData(1, 'Cerrajero', 'Pagado', 'Terminado', '5'),
-    createData(2, 'Plomero', 'No Pagado', 'En Progreso', ''),
-    createData(3, 'Carpintero', 'Pagado', 'Terminado', '3'),
-    createData(4, 'Carnicero', 'No Pagado', 'En Progreso', ''),
-    createData(5, 'Arquero', 'Pagado', 'Terminado', '4'),
-  ];
+  // const mockdata = [
+  //   createData(1, 'Cerrajero', 'Pagado', 'Terminado', '5'),
+  //   createData(2, 'Plomero', 'No Pagado', 'En Progreso', ''),
+  //   createData(3, 'Carpintero', 'Pagado', 'Terminado', '3'),
+  //   createData(4, 'Carnicero', 'No Pagado', 'En Progreso', ''),
+  //   createData(5, 'Arquero', 'Pagado', 'Terminado', '4'),
+  // ];
 
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -50,10 +50,22 @@ const TableOrders = () => {
       },
       // body: JSON.stringify(data)
     }
-    console.log("config:", config)
+    // console.log("config:", config)
     const datos = await utils.consultarHistorial(config);
     console.log("datos:", datos)
-    setData(data)
+
+    let datosProcesados = []
+    for (let i = 0; i < datos.length; i++) {
+      datosProcesados.push({
+        id: datos[i].hid,                                                                                                                                                                                                                                                                                                         
+        servicio: datos[i].job,
+        description: datos[i].service.description,
+        estadoServicio: datos[i].service.status,
+        calificacion: datos[i].service.rating,
+      })
+    }
+    console.log("datos2:", datosProcesados)
+    setData(datosProcesados)
   }
   
   const handleChangePage = (event, newPage) => {
@@ -114,7 +126,7 @@ const TableOrders = () => {
                     <TableRow key = {row.id}>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.id}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.servicio}</TableCell>
-                      <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.estadoPago}</TableCell>
+                      <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.description}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.estadoServicio}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.calificacion}</TableCell>
                     </TableRow>
