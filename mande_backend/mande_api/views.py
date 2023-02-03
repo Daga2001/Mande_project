@@ -455,7 +455,7 @@ def login_user(request):
 
         print("user:",request.data)
         try:
-            client = Client.objects.get(phone = hexPhone)
+            client = Client.objects.get(user = user, phone = hexPhone)
             token = Token.objects.get(user_id=user.uid)
             reqdata = {
                 "token": token.key,
@@ -469,7 +469,7 @@ def login_user(request):
         hashedPassword.update(request.data["password"].encode())
         hexPassword = hashedPassword.hexdigest()
         try:
-            worker = Worker.objects.get(password = hexPassword)
+            worker = Worker.objects.get(user = user, password = hexPassword)
             token = Token.objects.get(user_id=user.uid)
             reqdata = {
                 "token": token.key,

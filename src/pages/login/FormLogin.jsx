@@ -38,7 +38,7 @@ const FormLogin = () => {
     })
       .then((res) => res.json())
       .then((res) =>
-        {window.localStorage.setItem("loginUser", "Token " + res.description)
+        {window.localStorage.setItem("loginUser", "Token " + res.description.token);
         if(window.localStorage.loginUser != undefined) {
           navigate("/client/home")
         }}

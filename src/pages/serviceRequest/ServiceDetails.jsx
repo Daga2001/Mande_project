@@ -13,7 +13,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
 import { Context } from "../../context/Context";
-//import {  headerToken } from "../../data/headertoken";
 
 const ServiceDetails = () => {
     const theme = useTheme();
@@ -30,7 +29,7 @@ const ServiceDetails = () => {
     const [sid,setSID] = useState("")
     const headerToken = {
         headers: {
-          Authorization: `Token fe76dead69219edc32190e91a8d350febcb601cc`,
+          Authorization: window.localStorage.loginUser,
           "Content-type": "application/json",
         },
       };
@@ -109,7 +108,7 @@ const ServiceDetails = () => {
                     <img src={servicio1} height="150" width="150"/>
                     </Grid>
                     <Grid item>
-                    <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="baseline">
+                    <Grid container direction="column" spacing={1} justifyContent="center" alignItems="baseline">
                         <Grid item>
                             <h2> {location.state?.title} </h2>
                         </Grid>

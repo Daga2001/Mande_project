@@ -11,7 +11,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridToolbar  } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
 import { Context } from "../../context/Context";
-import {  headerToken } from "../../data/headertoken";
 
 const ServiceInfo = ( {type} ) => {
     const theme = useTheme();
@@ -22,7 +21,13 @@ const ServiceInfo = ( {type} ) => {
     const [listaTrabajadores,setListaTrabajadores] = useState([])
 
     const obtenerTrabajadores=async () => {
-      const config=headerToken;
+      const config = {
+        method: "GET",
+        headers: { 
+          "Content-type": "application/json" ,
+          Authorization: window.localStorage.loginUser
+        },
+      }
       const link="http://127.0.0.1:8000/mande/workers/view/"+location.state?.jid+"/"
       const response= await fetch(link,config)
       const data = await response.json()
