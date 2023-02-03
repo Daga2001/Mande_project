@@ -457,7 +457,12 @@ def login_user(request):
         try:
             client = Client.objects.get(phone = hexPhone)
             token = Token.objects.get(user_id=user.uid)
-            return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
+            serializer_user = UserSerializer(user, many=False)
+            reqdata = {
+                "token": token.key,
+                "user": serializer_user.data
+            }
+            return Response({"answer": True, "description": reqdata }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"answer": False, "description": 'Client does not exist'}, status=status.HTTP_404_NOT_FOUND)
     elif user.type == "Worker":
@@ -467,7 +472,12 @@ def login_user(request):
         try:
             worker = Worker.objects.get(password = hexPassword)
             token = Token.objects.get(user_id=user.uid)
-            return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
+            serializer_user = UserSerializer(user, many=False)
+            reqdata = {
+                "token": token.key,
+                "user": serializer_user.data
+            }
+            return Response({"answer": True, "description": reqdata }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"answer": False, "description": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
