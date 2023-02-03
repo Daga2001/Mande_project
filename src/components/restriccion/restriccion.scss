@@ -1,0 +1,33 @@
+.restriccion {
+  width: 100%;
+  height: 100vh;
+  background-color: black;
+
+  .image {
+    width: 100%;
+    height: 100vh;
+    background-image: url("../../assets/hacker.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.05;
+    position: relative;
+  }
+
+  .text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    color: white;
+    font-size: 45px;
+    text-align: center;
+  }
+}

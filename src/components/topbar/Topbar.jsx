@@ -31,6 +31,11 @@ const Topbar = () => {
     useProSidebar();
   const navigate = useNavigate();
 
+  function logout() {
+    window.localStorage.removeItem("loginUser");
+    navigate("/");
+  }
+
   return (
     <Box
       display="flex"
@@ -56,7 +61,7 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton>
+        <IconButton onClick={logout}>
           <LogoutIcon />
         </IconButton>
         <IconButton>

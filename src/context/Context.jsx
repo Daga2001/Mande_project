@@ -9,6 +9,10 @@ export default function ContextProvider({ children }) {
       page: "Home",
       collapsed: false
     },
+    registro: {
+      id: null,
+      trabajador: false
+    }
   };
   const [appState, setAppState] = useState(data);
   return (

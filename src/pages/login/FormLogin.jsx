@@ -7,19 +7,42 @@ import "./formLogin.scss";
 import logo from "../../assets/m2.png";
 import { useTranslation } from "react-i18next";
 import TopbarLandingPage from "../../components/topbarLandingPage.jsx/TopbarLandingPage";
+import { useNavigate } from "react-router-dom";
+import { WifiTetheringErrorRoundedTwoTone } from "@mui/icons-material";
 
 const FormLogin = () => {
   const [t, i18n] = useTranslation("login");
+  const navigate = useNavigate();
 
   // Creating schema
   let schema = Yup.object().shape({
     email: Yup.string()
       .required(t("error.require-email"))
       .email(t("error.invalid-email")),
-    password: Yup.string()
-      .required(t("error.require-password"))
-      .min(5, t("error.min-password")),
+    password: Yup.string().required(t("error.require-password")),
+    // .min(5, t("error.min-password")),
   });
+
+  function handleFormSubmit(values) {
+    console.log("enviando");
+    let data = {
+      email: values.email,
+      password: values.password,
+    };
+    console.log(data);
+    fetch("http://127.0.0.1:8000/mande/user/login", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((res) =>
+        {window.localStorage.setItem("loginUser", "Token " + res.description)
+        if(window.localStorage.loginUser != undefined) {
+          navigate("/client/home")
+        }}
+      );
+  }
 
   return (
     <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
@@ -35,9 +58,7 @@ const FormLogin = () => {
         <Formik
           validationSchema={schema}
           initialValues={{ email: "", password: "" }}
-          onSubmit={(values) => {
-            alert(JSON.stringify(values));
-          }}
+          onSubmit={handleFormSubmit}
         >
           {({
             values,

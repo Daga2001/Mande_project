@@ -7,78 +7,114 @@ import TopbarLandingPage from "../../components/topbarLandingPage.jsx/TopbarLand
 import "./formRegistration2.scss";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import CheckList from "../../components/checkList/CheckList";
 import SelectList from "../../components/selectList/SelectList";
 import { useTranslation } from "react-i18next";
+import { Context } from "../../context/Context";
 
 const FormRegistration2 = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
-  const [provideService, setProvideService] = useState(null);
   const [t, i18n] = useTranslation("registration");
+  const context = useContext(Context);
+
+  let provideService = context.appState.registro.trabajador;
+  let id = context.appState.registro.id;
+
+  let imagenes = [];
 
   const submit = (values) => {
-    console.log(values);
     navigate("/login");
   };
+
+  function onImageChange(input) {
+    let images = input.target.files;
+    if (provideService === false) {
+      imagenes = [];
+      imagenes.push(images[0]);
+    }
+    if (provideService === true) {
+      if (imagenes.length === 0) {
+        imagenes.push(images[0]);
+      } else {
+        imagenes.push(images[0]);
+      }
+    }
+    const body = new FormData();
+    if (provideService === true && imagenes.length === 2) {
+      body.append("idc_img_data", imagenes[0], imagenes[0].idc);
+      body.append("prof_img_data", imagenes[1], imagenes[1].prof);
+      body.append("uid", id);
+      cargarImagenes(body);
+    } else if (provideService === false) {
+      body.append("receipt_data", imagenes[0], imagenes[0].receipt);
+      body.append("uid", id);
+      cargarImagenes(body);
+    }
+  }
+
+  function cargarImagenes(cuerpo) {
+    let config = {
+      method: "POST",
+      headers: {},
+      body: cuerpo,
+    };
+    fetch("http://127.0.0.1:8000/mande/images/upload", config).then((res) =>
+      res.json()
+    );
+  }
 
   return (
     <Grid item xs={12} sm={12} md={12} lg={7} xl={7}>
       <TopbarLandingPage />
       <Box
         height={isNonMobile ? "calc(100vh - 70px)" : "100%"}
+        width={"100%"}
         padding={"30px"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
       >
         <div className="registration2">
-          <h1>{t("registration2.title")}</h1>
-          <Box
-            display={isNonMobile ? "grid" : "flex"}
-            flexDirection={"column"}
-            justifyContent={"center"}
-            gap="30px"
-            justifyItems={"center"}
-            gridTemplateColumns="repeat(2, minmax(0, 1fr))"
-            sx={{
-              "& > div": {
-                gridColumn: isNonMobile ? undefined : "span 2",
-              },
-            }}
-          >
+          <h1>Registro</h1>
+          {provideService === true && (
             <Button
               variant="contained"
-              sx={{
-                width: "230px",
-                borderRadius: "10px",
-                fontSize: "20px",
-                gridColumn: "span 1",
-              }}
-              onClick={() => {
-                setProvideService(true);
-              }}
+              component="label"
+              endIcon={<PhotoCamera />}
+              sx={{ gridColumn: "span 2" }}
             >
-              {t("registration2.yes.title")}
+              {t("registration1.profile-photo")}
+              <input type="file" hidden onChange={onImageChange} />
             </Button>
+          )}
+          {provideService === true && (
             <Button
               variant="contained"
-              sx={{
-                width: "230px",
-                borderRadius: "10px",
-                fontSize: "20px",
-                gridColumn: "span 1",
-              }}
-              onClick={() => {
-                setProvideService(false);
-              }}
+              component="label"
+              endIcon={<PhotoCamera />}
+              sx={{ gridColumn: "span 2" }}
             >
-              {t("registration2.no.title")}
+              {t("registration1.id-photo")}
+              <input type="file" hidden onChange={onImageChange} />
             </Button>
-          </Box>
+          )}
+          {provideService === false && (
+            <Button
+              variant="contained"
+              component="label"
+              endIcon={<PhotoCamera />}
+              sx={{ gridColumn: "span 2" }}
+            >
+              {t("registration1.bill-photo")}
+              <input type="file" hidden onChange={onImageChange} />
+            </Button>
+          )}
+
           {provideService === true ? (
             <Box paddingTop={"30px"}>
-              <h3>
-                {t("registration2.yes.sub-title")}
-              </h3>
+              <h3>{t("registration2.yes.sub-title")}</h3>
               <Box>
                 <CheckList />
               </Box>

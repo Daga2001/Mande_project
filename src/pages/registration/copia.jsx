@@ -8,20 +8,29 @@ import "./formRegistration.scss";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useState, useContext } from "react";
-import RegistrationPage2 from "../registrationPage2/ResgistrationPage2";
-import { Context } from "../../context/Context";
+import { useState } from "react";
+import { asignarUbicacion } from "../../services/ubicacion";
 
 const FormRegistration = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
   const [t, i18n] = useTranslation("registration");
   const [provideService, setProvideService] = useState(null);
-  const [validar, setValidar] = useState(false);
-  const context = useContext(Context);
 
   let imagenes = [];
-  let idUser = null;
+
+  // const initialValues = {
+  //   firstName: "",
+  //   lastName: "",
+  //   dateBirth: "",
+  //   street: "",
+  //   street2: "",
+  //   houseid: "",
+  //   ciudad: "",
+  //   email: "",
+  //   contact: "",
+  //   password: "",
+  // };
 
   function crearUsuario(values) {
     let data = null;
@@ -65,12 +74,16 @@ const FormRegistration = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        idUser = res.uid;
+        // console.log(res);
+        // console.log(res.uid)
         asignarUbicacion(res.uid, direccion);
+        //asignarimagen(fetch("/subirImagen/"))
       });
+    // .then((res) => navigate("/login"));
   }
 
   const handleFormSubmit = (values) => {
+    // console.log(values);
     let data = {
       house_id: values.houseid,
       street: values.street + " " + values.street2,
@@ -85,60 +98,84 @@ const FormRegistration = () => {
     })
       .then((res) => res.json())
       .then((res) => {
+        // console.log("Direccion enviada");
         crearUsuario(values);
       });
+    // navigate("/login");
   };
 
-  function asignarUbicacion(id, direccion) {
-    let hayCoordenadas = true;
-    let lat = null;
-    let lng = null;
-
-    function enviar(latitud, longitud) {
-      let data = {
-        uid: id,
-        latitude: latitud,
-        longitude: longitud,
-      };
-      if (hayCoordenadas) {
-        fetch("http://127.0.0.1:8000/mande/gpslocation/create", {
-          method: "POST",
-          headers: { "Content-type": "application/json" },
-          body: JSON.stringify(data),
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            let data = {
-              ...context.appState,
-              registro: {
-                id: idUser,
-                trabajador: provideService,
-              },
-            };
-            context.setAppState(data);
-            navigate("/registration/page2");
-          });
+  function onImageChange(input) {
+    let images = input.target.files;
+    // console.log("OnImageChange");
+    // console.log("Provider", provideService);
+    // console.log("Numero de imágenes", imagenes.length);
+    if (provideService === false) {
+      // console.log("Provider flase");
+      imagenes = [];
+      imagenes.push(images[0]);
+      // console.log("Imagen cargada");
+    }
+    if (provideService === true) {
+      // console.log("Provider true");
+      if (imagenes.length === 0) {
+        imagenes.push(images[0]);
+        // console.log("Imagen 1 cargada");
       } else {
-        console.log("no hay coordenadas");
+        imagenes.push(images[0]);
+        // console.log("Imagen 2 cargada");
       }
     }
-
-    fetch(
-      `http://api.positionstack.com/v1/forward?access_key=464691bbec21522ec36a86bcb168f7b4&country=CO&region=Cali&query= ${direccion}`
-    )
-      .then((res) => res.json())
-      .then((res) => {
-        // console.log(res);
-        if (res.data.length === 0) {
-          hayCoordenadas = false;
-        } else {
-          lat = res.data[0].latitude;
-          lng = res.data[0].longitude;
-        }
-        // console.log(lat, lng);
-        enviar(lat, lng);
-      });
+    // if (images.length > 0) {
+    //   for (let i = 0; i < images.length; i++) {
+    //     imagenes.push(images[i]);
+    //     console.log("Imagen cargada");
+    //   }
+    // }
+    // console.log("Numero de imágenes 2:", imagenes.length);
+    const body = new FormData();
+    if (provideService === true && imagenes.length === 2) {
+      body.append("idc_img_data", imagenes[0], imagenes[0].idc);
+      body.append("prof_img_data", imagenes[1], imagenes[1].prof);
+      body.append("uid", 1);
+      cargarImagenes(body);
+    } else if (provideService === false){
+      body.append("receipt_data", imagenes[0], imagenes[0].receipt);
+      body.append("uid", 3);
+      cargarImagenes(body);
+    }
   }
+
+  function cargarImagenes(cuerpo) {
+    let config = {
+      method: "POST",
+      headers: {},
+      body: cuerpo,
+    };
+    fetch("http://127.0.0.1:8000/mande/images/upload", config)
+      .then((res) => res.json())
+      // .then((res) => console.log("Imagen guardada"));
+  }
+
+  const checkoutSchema = yup.object().shape({
+    // firstName: yup.string().required(t("registration1.error.require")),
+    // lastName: yup.string().required(t("registration1.error.require")),
+    // email: yup
+    //   .string()
+    //   .email(t("registration1.error.invalid-email"))
+    //   .required(t("registration1.error.require")),
+    // contact: yup
+    //   .string()
+    //   // .matches(phoneRegExp, "Phone number is not valid")
+    //   .required(t("registration1.error.require")),
+    // // street: yup.string().required("Requerido"),
+    // ciudad: yup.string().required("Requerido"),
+    // houseid: yup.string().required("Requerido"),
+    // password: yup
+    //   .string()
+    //   .required(t("registration1.error.require"))
+    //   .min(5, t("registration1.error.invalid-password")),
+    // idNumber: yup.string().required(t("registration1.error.require")),
+  });
 
   return (
     <Grid item xs={12} sm={12} md={12} lg={7} xl={7}>
@@ -147,7 +184,11 @@ const FormRegistration = () => {
         height={isNonMobile ? "calc(100vh - 70px)" : "100%"}
         padding={"30px"}
       >
-        <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
+        <Formik
+          onSubmit={handleFormSubmit}
+          initialValues={initialValues}
+          validationSchema={checkoutSchema}
+        >
           {({
             values,
             errors,
@@ -243,6 +284,19 @@ const FormRegistration = () => {
                       helperText={touched.lastName && errors.lastName}
                       sx={{ gridColumn: "span 3" }}
                     />
+                    {/* <TextField
+                      fullWidth
+                      variant="filled"
+                      type="text"
+                      label={t("registration1.id-number")}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.idNumber}
+                      name="idNumber"
+                      error={!!touched.idNumber && !!errors.idNumber}
+                      helperText={touched.idNumber && errors.idNumber}
+                      sx={{ gridColumn: "span 3" }}
+                    /> */}
                     <TextField
                       fullWidth
                       id="filled-number"
@@ -371,6 +425,39 @@ const FormRegistration = () => {
                       helperText={touched.ciudad && errors.ciudad}
                       sx={{ gridColumn: "span 2" }}
                     />
+                    {provideService === true && (
+                      <Button
+                        variant="contained"
+                        component="label"
+                        endIcon={<PhotoCamera />}
+                        sx={{ gridColumn: "span 2" }}
+                      >
+                        {t("registration1.profile-photo")}
+                        <input type="file" hidden onChange={onImageChange} />
+                      </Button>
+                    )}
+                    {provideService === true && (
+                      <Button
+                        variant="contained"
+                        component="label"
+                        endIcon={<PhotoCamera />}
+                        sx={{ gridColumn: "span 2" }}
+                      >
+                        {t("registration1.id-photo")}
+                        <input type="file" hidden onChange={onImageChange} />
+                      </Button>
+                    )}
+                    {provideService === false && (
+                      <Button
+                        variant="contained"
+                        component="label"
+                        endIcon={<PhotoCamera />}
+                        sx={{ gridColumn: "span 2" }}
+                      >
+                        {t("registration1.bill-photo")}
+                        <input type="file" hidden onChange={onImageChange} />
+                      </Button>
+                    )}
                   </Box>
                   <Box
                     className="send"
@@ -380,14 +467,14 @@ const FormRegistration = () => {
                   >
                     <Button
                       variant="outlined"
-                      type="submit"
+                      type="submitZ"
                       sx={{
                         width: "230px",
                         height: "50px",
                         borderRadius: "10px",
                       }}
                     >
-                      Validar Datos
+                      {t("registration2.sign-up")}
                     </Button>
                   </Box>
                 </form>
