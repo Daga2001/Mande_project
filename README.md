@@ -12,7 +12,7 @@ Final DB project
 - Marcelo Alejandro García Millán - 201941427
 
 ## Recursos conceptuales.
-- **E-R model**: https://cacoo.com/diagrams/rVxYCSrWYQasWN6M/219AE
+- **E-R model**: https://drive.google.com/file/d/1Iclxx3B-sJPdg7b3Fr3ZpxMinL7GvcKl/view?usp=sharing
 - **Relational model**: https://docs.google.com/document/d/1CGOIrEInztU8WcCctEN5Y02XEnnSknq-eUE90ve7f-w/edit?usp=sharing
 - **Data dictionary**: https://docs.google.com/spreadsheets/d/1VJ8t1gFzeU4gF5vtKtYQA3Ez9Y6jFC4X/edit?usp=sharing&ouid=113828892643060106417&rtpof=true&sd=true
 - **GUI Design**: https://drive.google.com/file/d/1ZLc7bsEpW7fKdaxIAk_OxEI1byw9VmMH/view
