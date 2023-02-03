@@ -261,11 +261,32 @@ Solo basta con que el cliente se autentique.
 ------------------------------------------------------------------
 -- mande/job/updateInfo
 ------------------------------------------------------------------
+Se requiere de autenticacion.
+{
+    "jid": 1,
+    "occupation": "Jugador de LOL",
+    "j_description": "Es un jugador sin vida social ni amigos que tiene serios problemas de autoestima :)"
+}
 
 ------------------------------------------------------------------
 -- mande/service/info/update
 ------------------------------------------------------------------
+Se requiere de autenticacion.
+{
+    "sid": 3,
+    "rating": null,
+    "status": "Pendiente",
+    "description": "Quiero un jugador pro para que me ayude a subir a diamante rapido y pueda jugar un torneo de Roblox",
+    "client_id": 3,
+    "worker_id": 1,
+    "jid": 2,
+    "card_num": "5f88134474eb05a9a3907d21b6263f85d63157bb4bfe6643f02b46f6a7c5b50b"
+}
 
 ------------------------------------------------------------------
 -- mande/user/notify
 ------------------------------------------------------------------
+Se requiere de autenticacion.
+{
+    "sid": "1"
+}
