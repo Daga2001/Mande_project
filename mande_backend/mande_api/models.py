@@ -107,6 +107,7 @@ class Worker_Job(models.Model):
 class Service(models.Model):
     sid=models.AutoField(primary_key=True)
     rating=models.DecimalField(null=True, max_digits=5, decimal_places=2)
+    status=models.CharField(max_length=200, default="Pendiente")
     description=models.CharField(max_length=500, null=True)
     client_id=models.ForeignKey(Client,on_delete=models.CASCADE,related_name="client_id_service")
     worker_id=models.ForeignKey(Worker,on_delete=models.CASCADE,related_name="worker_id_service")

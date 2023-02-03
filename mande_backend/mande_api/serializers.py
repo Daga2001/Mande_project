@@ -185,7 +185,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = (
-            "sid", "rating", "description", "client_id", "worker_id", 
+            "sid", "rating", "status", "description", "client_id", "worker_id", 
             "jid", "card_num"
         )
 
@@ -197,7 +197,7 @@ class ServiceSerializerDetailed(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = (
-            "sid", "rating", "description", "client", "worker", 
+            "sid", "rating", "status", "description", "client", "worker", 
             "job", "card_num"
         )
 

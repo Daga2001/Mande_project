@@ -615,3 +615,101 @@ def update_job(request):
             return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         return Response({"error": True, "error_cause": "Invalid role!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Método para enviar un correo
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def send_email(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        if user.type == "Client":
+            service = Service.objects.get(sid=request.data["sid"], client_id=user.uid) 
+        elif user.type == "Worker":
+            service = Service.objects.get(sid=request.data["sid"], worker_id=user.uid) 
+    except Service.DoesNotExist:
+        return Response({"error": True, "error_cause": "This service doesn't exist!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # Setup the MIME
+    message = MIMEMultipart()
+
+    sender = 'pruebapruebas205'
+    password = 'onupdrtfvpvvhasr'
+
+    if user.type == "Client":
+        message['From'] = user.email
+        message['Subject'] = "Nueva solicitud de trabajo"
+        message['To'] = service.worker_id.user.email
+        body = '''
+            Estimad@ {name} {lastName}.
+
+            Gracias por apoyar nuestros servicios.
+
+            Le notificamos que se ha registrado en su cuenta una nueva solicitud para
+            el trabajo de {job}, esperamos que pueda aceptarla lo más pronto posible.
+
+            Atentamente,
+            Mande team
+        '''.format(name=service.worker_id.user.f_name, lastName=service.worker_id.user.l_name, job=service.jid.occupation)
+
+        receiver = service.worker_id.user.email
+
+    elif user.type == "Worker":
+        message['From'] = user.email
+        message['Subject'] = "Respuesta del mande-trabajador"
+        message['To'] = service.client_id.user.email
+        body = '''
+            Estimad@ {name} {lastName}.
+
+            Gracias por adquirir nuestros servicios.
+
+            Le notificamos que su pedido fue {status} por nuestro trabajador, si desea
+            puede comuncicarse con uno de nuestros operadores para más informacion sobre
+            su pedido.
+
+            Atentamente,
+            Mande team
+        '''.format(name=service.worker_id.user.f_name, lastName=service.worker_id.user.l_name, job=service.status)
+        
+        receiver = service.client_id.user.email
+        
+    message.attach(MIMEText(body, 'plain'))
+
+    # use gmail with port
+    session = smtplib.SMTP('smtp.gmail.com', 587)
+    # enable security
+    session.starttls()
+
+    # login with mail_id and password
+    session.login(sender, password)
+
+    text = message.as_string()
+    session.sendmail(sender, receiver, text)
+    session.quit()
+
+# Método para actualizar un servicio
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_service(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        service = Service.objects.get(sid=request.data["sid"]) 
+        serializer = ServiceSerializer(
+            service, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({ "error": True, "error_cause": serializer.errors }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Service.DoesNotExist:
+        return Response({"error": True, "error_cause": "This service doesn't exist!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

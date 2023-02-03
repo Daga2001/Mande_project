@@ -69,6 +69,10 @@ urlpatterns = [
     views.view_history, name="req_service"),
     path('mande/job/updateInfo',
     views.update_job, name="req_service"),
+    path('mande/service/info/update',
+    views.update_service, name="req_service"),
+    path('mande/user/notify',
+    views.send_email, name="req_service"),
 ]
 
 
