@@ -525,6 +525,8 @@ def read_detailed_service(request):
         else:
             return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_404_NOT_FOUND)
     elif user.type == "Worker":
+        service = Service.objects.filter(worker_id=user.uid, sid = request.data["sid"])
+        serializer = ServiceSerializerDetailed(service, many=True)
         if len(serializer.data) > 0 :
             try:
                 work_job = Worker_Job.objects.get(worker_id=user.uid, jid = serializer.data[0]["job"]["jid"])
@@ -674,7 +676,7 @@ def send_email(request):
 
             Atentamente,
             Mande team
-        '''.format(name=service.worker_id.user.f_name, lastName=service.worker_id.user.l_name, job=service.status)
+        '''.format(name=service.worker_id.user.f_name, lastName=service.worker_id.user.l_name, status=service.status)
         
         receiver = service.client_id.user.email
         
@@ -691,6 +693,8 @@ def send_email(request):
     text = message.as_string()
     session.sendmail(sender, receiver, text)
     session.quit()
+
+    return Response({ "detail": "Email sent successfully!" }, status=status.HTTP_200_OK)
 
 # Método para actualizar un servicio
 
