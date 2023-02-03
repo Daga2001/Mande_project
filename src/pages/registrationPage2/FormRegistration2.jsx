@@ -12,6 +12,7 @@ import CheckList from "../../components/checkList/CheckList";
 import SelectList from "../../components/selectList/SelectList";
 import { useTranslation } from "react-i18next";
 import { Context } from "../../context/Context";
+import PaymentForm from "../../components/paymentForm/PaymentForm";
 
 const FormRegistration2 = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -117,6 +118,7 @@ const FormRegistration2 = () => {
               <h3>{t("registration2.yes.sub-title")}</h3>
               <Box>
                 <CheckList />
+                <PaymentForm />
               </Box>
             </Box>
           ) : (
