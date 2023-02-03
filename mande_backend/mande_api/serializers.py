@@ -201,7 +201,7 @@ class ServiceSerializerDetailed(serializers.ModelSerializer):
             "job", "card_num"
         )
 
-class HistorySerializer(serializers.ModelSerializer):
+class HistorySerializerDetailed(serializers.ModelSerializer):
     service = ServiceSerializer(many=False, read_only=True, source="sid")
     job = serializers.SerializerMethodField('get_job')
 
@@ -213,4 +213,12 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = (
             "hid", "amount", "client_id", "service", "job"
+        )
+
+class HistorySerializer(serializers.ModelSerializer):
+     
+    class Meta:
+        model = History
+        fields = (
+            "hid", "amount", "client_id", "sid"
         )

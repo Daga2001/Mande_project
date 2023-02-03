@@ -9,6 +9,7 @@
     "server": "python ./mande_backend/manage.py runserver",
     "mkmig": "python ./mande_backend/manage.py makemigrations",
     "mig": "python ./mande_backend/manage.py migrate",
+    "envi": "../venv-electrica/Scripts/activate",
     "preview": "vite preview"
   },
   "dependencies": {
