@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "server": "python ./mande_backend/manage.py runserver",
+    "mkmig": "python ./mande_backend/manage.py makemigrations",
+    "mig": "python ./mande_backend/manage.py migrate",
     "preview": "vite preview"
   },
   "dependencies": {
