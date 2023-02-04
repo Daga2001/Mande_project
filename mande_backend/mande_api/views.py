@@ -782,13 +782,22 @@ def get_client_in_service(request):
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Worker":
+        print("reques:",request.data["sid"])
         services = Service.objects.filter(sid = request.data["sid"])
-        print("serv:::",services[0])
         clients = []
         for serv in services:
-            serializer = ServiceSerializerDetailed(serv, many=True)
-            for data in serializer.data:
-                clients.append(data)
+            dataBody = {
+                "nombre": serv.client_id.user.f_name,
+                "apellido": serv.client_id.user.l_name,
+                "direccion": {
+                    "calle": serv.client_id.user.address_id.street,
+                    "ciudad": serv.client_id.user.address_id.city,
+                    "pais": serv.client_id.user.address_id.country,
+                    "cod_postal": serv.client_id.user.address_id.postal_code,
+                },
+                "email": serv.client_id.user.email,
+            }
+            clients.append(dataBody)
         return Response(clients, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": 'Only workers allowed!'}, status=status.HTTP_404_NOT_FOUND)
