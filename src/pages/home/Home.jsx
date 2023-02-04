@@ -3,8 +3,11 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Header from "../../components/header/Header";
 import Restriccion from "../../components/restriccion/Restriccion";
+import { useContext } from "react";
+import { Context } from "../../context/Context";
 
 const Home = () => {
+  const context = useContext(Context);
   return (
     <>
       {window.localStorage.loginUser === undefined ? (

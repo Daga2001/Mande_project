@@ -22,6 +22,7 @@ const FormRegistration = () => {
 
   let imagenes = [];
   let idUser = null;
+  let name = null;
 
   function crearUsuario(values) {
     let data = null;
@@ -35,6 +36,7 @@ const FormRegistration = () => {
       values.houseid +
       "-" +
       values.houseid2;
+    name = values.firstName + " " + values.lastName;
     if (provideService === false) {
       data = {
         type: "Client",
@@ -108,14 +110,15 @@ const FormRegistration = () => {
         })
           .then((res) => res.json())
           .then((res) => {
-            let data = {
+            let data2 = {
               ...context.appState,
               registro: {
                 id: idUser,
                 trabajador: provideService,
               },
+              name: name,
             };
-            context.setAppState(data);
+            context.setAppState(data2);
             navigate("/registration/page2");
           });
       } else {

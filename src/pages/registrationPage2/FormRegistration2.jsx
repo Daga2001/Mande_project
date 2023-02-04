@@ -118,14 +118,13 @@ const FormRegistration2 = () => {
               <h3>{t("registration2.yes.sub-title")}</h3>
               <Box>
                 <CheckList />
-                <PaymentForm />
               </Box>
             </Box>
           ) : (
             provideService != null && (
               <Box paddingTop={"30px"}>
                 <h3>{t("registration2.no.sub-title")}</h3>
-                <SelectList />
+                <PaymentForm />
                 <Box padding={"10px"}>
                   <h4>{t("registration2.no.message")}</h4>
                 </Box>
