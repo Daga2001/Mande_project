@@ -4,9 +4,10 @@ import * as utils from '../../utils/utils'
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState, useEffect } from "react";
 import { Co2Sharp } from '@mui/icons-material';
+import { Navigate } from 'react-router-dom';
 
 const TableOrders = () => {
-
+  const navigate = useNavigate()
   const columns = [
     { id: 'id', label: 'ID', minWidth: 50 },
     { id: 'servicio', label: 'Servicio Prestado', minWidth: 100 },
@@ -36,6 +37,7 @@ const TableOrders = () => {
   const [descripcion,setDescripcion] = useState("")
   const [estado,setEstado] = useState("")
   const [datosServicio,setDatosServicio] = useState([])
+  const [click,setClick] = useState(0)
   // Obtiene el historial del cliente
 
   async function obtenerHistorial() {
@@ -130,6 +132,12 @@ const TableOrders = () => {
     setEstado(event.estadoServicio)
     obtenerDatosServicio()
     actualizarRatingServicio()
+    if(click == 1){
+      navigate("../home")
+    }
+    else{
+      setClick(click+1)
+    }
   }
 
   const handleChangePage = (event, newPage) => {
