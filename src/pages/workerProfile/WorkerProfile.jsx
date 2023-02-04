@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Header from "../../components/header/Header";
 import FormWorkerProfile from "./FormWorkerProfile";
-import CardUser from "../../components/cardUser/CardUser";
+import CardUser from "../../components/cardUser/CardUser.jsx";
 import Grid from "@mui/material/Grid";
 import Restriccion from "../../components/restriccion/Restriccion";
 import { useContext } from "react";

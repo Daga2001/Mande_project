@@ -96,6 +96,7 @@ const FormWorkerProfile = ( {type} ) => {
       .required(t("registration1.error.require"))
       .min(5, t("registration1.error.invalid-password")),
     idNumber: yup.string().required(t("registration1.error.require")),
+    dateBirth: yup.date().required("requerido!")
   });
 
   const initialValues = {
