@@ -15,7 +15,7 @@ import { tokens } from "../../style/theme";
 import { Context } from "../../context/Context";
 import { minHeight } from "@mui/system";
 
-const ServiceDetails = () => {
+const ServiceDetails = ( {type} ) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
@@ -79,6 +79,7 @@ const ServiceDetails = () => {
         const data = await response.json()
         setCorreo(data.user.email)
         setID(data.user.uid)
+        console.log(data)
     }
 
     const enviarCorreo = async() => {
@@ -110,6 +111,23 @@ const ServiceDetails = () => {
           const data = await response.json()
           console.log(data)
           setDataService(data.sid)
+          console.log (dataService)
+    }
+
+    const crearHistoria = async() => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({
+                "client_id":id,
+                "amount":location.state?.precio,
+                "sid_id":dataService,
+            })
+          }
+          const link="http://127.0.0.1:8000/mande/history/create"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
     }
 
     const handleClick = () => {
@@ -117,12 +135,17 @@ const ServiceDetails = () => {
         {
             obtenerDatos()
             crearServicio()
+            crearHistoria() 
             enviarCorreo()
-            navigate("../home")
+            //navigate("../home")
         }
         else{ 
         }   
     }
+
+    useEffect(() => {
+        obtenerDatos();
+      },[type]);
 
   return (
     <div>

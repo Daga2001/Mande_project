@@ -7,7 +7,7 @@ export default function ContextProvider({ children }) {
   let data = {
     sidebar: {
       page: "Home",
-      collapsed: false,
+      collapsed: false
     },
     registro: {
       id: null,

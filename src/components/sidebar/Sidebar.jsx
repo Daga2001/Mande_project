@@ -57,8 +57,13 @@ const Sidebar_ = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selected, setSelected] = useState(context.appState.sidebar.page);
-  const { toggleSidebar, collapseSidebar, broken, rtl, collapsed } =
-    useProSidebar();
+  const {
+    toggleSidebar,
+    collapseSidebar,
+    broken,
+    rtl,
+    collapsed,
+  } = useProSidebar();
 
   function updateContext(title, state) {
     context.setAppState({
@@ -151,9 +156,7 @@ const Sidebar_ = () => {
             <br />
             <Item
               title="Home"
-              to={`/${
-                context.appState.roll === "Client" ? "client" : "worker"
-              }/home`}
+              to="/client/home"
               icon={<HomeIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -162,31 +165,25 @@ const Sidebar_ = () => {
             />
             <Item
               title="Perfil"
-              to={`/${
-                context.appState.roll === "Client" ? "client" : "worker"
-              }/profile`}
+              to="/client/profile"
               icon={<AccountBoxIcon />}
               selected={selected}
               setSelected={setSelected}
               updateContext={updateContext}
               collapsed={collapsed}
             />
-            {context.appState.roll === "Client" && (
-              <Item
-                title="Servicios"
-                to="/client/services"
-                icon={<HandshakeIcon />}
-                selected={selected}
-                setSelected={setSelected}
-                updateContext={updateContext}
-                collapsed={collapsed}
-              />
-            )}
+            <Item
+              title="Servicios"
+              to="/client/services"
+              icon={<HandshakeIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              updateContext={updateContext}
+              collapsed={collapsed}
+            />
             <Item
               title="Pedidos"
-              to={`/${
-                context.appState.roll === "Client" ? "client" : "worker"
-              }/orders`}
+              to="/client/orders"
               icon={<KeyboardCommandKeyIcon />}
               selected={selected}
               setSelected={setSelected}

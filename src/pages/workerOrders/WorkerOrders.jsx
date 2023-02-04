@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
-import Sidebar from "../../components/sidebar/Sidebar";
+import WorkerSidebar from "../../components/sidebar/WorkerSidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Header from "../../components/header/Header";
 import TableWorkerOrders from "./TableWorkerOrders";
