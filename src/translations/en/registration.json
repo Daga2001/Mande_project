@@ -12,7 +12,7 @@
     "profile-photo": "PROFILE PHOTO",
     "id-photo": "ID PHOTO",
     "bill-photo": "BILL PHOTO",
-    "verify": "Verify",
+    "verify": "Update Data",
     "error": {
       "require": "Require",
       "invalid-email": "Invalid email",

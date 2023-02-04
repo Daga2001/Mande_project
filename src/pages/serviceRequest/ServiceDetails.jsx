@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Grid, Button, IconButton, useTheme, TextField, FormControl, Select, MenuItem } from "@mui/material";
+import { Box, Grid, Button, IconButton, useTheme, TextField, FormControl, Select, MenuItem, Rating, Alert, AlertTitle } from "@mui/material";
 import * as yup from "yup";
 import React from 'react';
 import servicio1 from '../../assets/Servicio1.png';
@@ -8,22 +8,121 @@ import estrella from '../../assets/estrella.png';
 import ver from '../../assets/ver.png';
 import Header from "../../components/header/Header";
 import "./ServiceDetails.scss";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
-import { Context } from "../../context/ContextList";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
+import { Context } from "../../context/Context";
+import { minHeight } from "@mui/system";
 
 const ServiceDetails = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const context = useContext(Context);
     const navigate = useNavigate();
-    const [metodo,setMetodo] = useState('');
-    const handleChange = (event) => {
-        setMetodo(event.target.value);
-      };
+    const location = useLocation();
+    const context = useContext(Context);
+    const [descripcion,setDescripcion] = useState('');
+    const [numeroTarjeta,setNumeroTarjeta] = useState(0);
+    const [tipoTarjeta, setTipoTarjeta] = useState("");
+    const [fechaExpiracion,setFechaExpiracion] = useState("");
+    const [cvv, setCvv] = useState(0);
+    const [correo,setCorreo] = useState("")
+    const [id,setID] = useState(0)
+    const [dataService,setDataService] = useState("")
 
+    const headerToken = {
+        headers: {
+          Authorization: window.localStorage.loginUser,
+          "Content-type": "application/json",
+        },
+      };
+    const handleChange = (event) => {
+        setDescripcion(event.target.value);
+    };
+    const handleChangeNum = (event) => {
+        setNumeroTarjeta(event.target.value);
+    };
+    const handleChangeTipo = (event) => {
+        setTipoTarjeta(event.target.value);
+    };
+    const handleChangeFecha = (event) => {
+        setFechaExpiracion(event.target.value);
+    };
+    const handleChangeCvv = (event) => {
+        setCvv(event.target.value);
+    };
+    const handleChangeDesc = (event) => {
+        setDescripcion(event.target.value);
+    }
+    
+    const validateData = async () => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body:JSON.stringify({
+                "num":numeroTarjeta,
+                "type":tipoTarjeta,
+                "expiration_dt":fechaExpiracion,
+                "cvv":cvv
+            })
+          }
+          const link="http://127.0.0.1:8000/mande/paymentMethod/validate"
+          const response = await fetch(link,config)
+          const data= await response.json();
+          console.log (data)
+    }
+
+    const obtenerDatos = async() => {
+        const config = headerToken;
+        const link = "http://127.0.0.1:8000/mande/user/view"
+        const response=await fetch(link,config)
+        const data = await response.json()
+        setCorreo(data.user.email)
+        setID(data.user.uid)
+    }
+
+    const enviarCorreo = async() => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({"sid":dataService})
+          }
+          const link="http://127.0.0.1:8000/mande/user/notify"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+    }
+
+    const crearServicio = async() => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({
+                "description":descripcion,
+                "client_id":id,
+                "worker_id":location.state?.wid,
+                "jid":location.state?.jid,
+                "card_num":numeroTarjeta
+            })
+          }
+          const link="http://127.0.0.1:8000/mande/service/request"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+          setDataService(data.sid)
+    }
+
+    const handleClick = () => {
+        if (validateData())
+        {
+            obtenerDatos()
+            crearServicio()
+            enviarCorreo()
+            navigate("../home")
+        }
+        else{ 
+        }   
+    }
 
   return (
     <div>
@@ -35,53 +134,48 @@ const ServiceDetails = () => {
                     <img src={servicio1} height="150" width="150"/>
                     </Grid>
                     <Grid item>
-                    <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="baseline">
+                    <Grid container direction="column" spacing={1} justifyContent="center" alignItems="baseline">
                         <Grid item>
-                            <h2> Cuidador de Mascotas</h2>
+                            <h2> {location.state?.title} </h2>
                         </Grid>
                         <Grid item>
-                            <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod
-tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam,
-quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
+                            <p> {location.state?.description} </p>
                         </Grid>
                     </Grid>
                 </Grid>
                 </Grid>
                 <Grid item>
                     <Box  gap="30px" sx={{boxShadow:9, border: 1}} >
-
-                    
                     <Grid container direction="column" spacing = {1}   style={{width: "500px"}} alignItems="center" justifyContent="flex-end" wrap='nowrap'>  
                         <Grid item>
                         <h2> Paso Final</h2>
                         </Grid>
                         <Grid item>
-                            <p> Precio hora: 1000% </p>
+                            <p>Precio Final: {location.state?.precio}</p>
                         </Grid>
                         <Grid item>
-                            <p> Añada una descripción al favor a realizar </p>
+                            <h2>Colocar descripcion del Servicio</h2>
                         </Grid>
-                        <Grid item >
+                        <Grid item>
+                            <FormControl fullWidth gap="30px">
+                                <TextField value={descripcion} onChange={handleChangeDesc} label="Descripcion" variant="filled"/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item>
+                            <p> Añada la información de la tarjeta</p>
+                        </Grid>
+                        <Grid item>
+                            <FormControl fullWidth gap="30px">
+                                <TextField value={numeroTarjeta} onChange={handleChangeNum} label="Numero de Tarjeta" variant="filled"/>
+                                <TextField value={tipoTarjeta} onChange={handleChangeTipo} label="Tipo de Tarjeta" variant="filled"/>
+                                <TextField value={fechaExpiracion} onChange={handleChangeFecha} label="Fecha de Expiracion" variant="filled"/>
+                                <TextField value={cvv} onChange={handleChangeCvv}  label="Numero Cvv" variant="filled"/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item>
                         <FormControl fullWidth gap="30px" >
-                            <TextField id="descripcion" variant="filled"/>
+                            <Button variant="contained" onClick={handleClick}>Contratar </Button>
                         </FormControl>
-                        </Grid>
-                        <Grid item> 
-                        <h2> Método de pago </h2>
-                        </Grid>
-                        <Grid item>
-                        <FormControl fullWidth gap="30px" >
-                            <Select id="selectMetodo" value={metodo} label="Metodo de Pago" onChange={handleChange}>
-                                <MenuItem value={"Efectivo"}>Efectivo</MenuItem>
-                                <MenuItem value={"Tarjeta"}>Tarjeta</MenuItem>
-                            </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item>
-                        <FormControl fullWidth gap="30px" >
-                            <Button variant="contained">Contratar </Button>
-                            </FormControl>
                         </Grid>
                     </Grid>
                     </Box>
@@ -95,40 +189,24 @@ consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
                 variant="filled"
                 type="text"
                 label="Nombre"
-                value=""
+                value={location.state?.nombre}
                 />
                 <TextField
                 disabled
                 variant="filled"
                 type="text"
                 label="Distancia"
-                value=""
+                value={location.state?.distancia}
                 />
                 <TextField
                 disabled
                 variant="filled"
                 type="text"
                 label="Precio por Hora"
-                value=""
+                value={location.state?.precio}
                 />
-                <h2> Estrellas: </h2>
-                <Grid container direction="row" spacing={1} wrap='nowrap'>
-                    <Grid item>
-                        <img src={estrellafull} height="25" width="25"/>
-                    </Grid>
-                    <Grid item>
-                        <img src={estrellafull} height="25" width="25"/>
-                    </Grid>
-                    <Grid item>
-                        <img src={estrellafull} height="25" width="25"/>
-                    </Grid>
-                    <Grid item>
-                        <img src={estrella} height="25" width="25"/>
-                    </Grid>
-                    <Grid item>
-                        <img src={estrella} height="25" width="25"/>
-                    </Grid>
-                </Grid>
+                <h2> Rating: </h2>
+                <Rating precision={0.1} value={location.state?.rating} readOnly/>
                 </FormControl>
             </Box>
 

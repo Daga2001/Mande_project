@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Cards from "react-credit-cards";
 import "react-credit-cards/es/styles-compiled.css";
 import "./paymentForm.scss";
+import { Context } from "../../context/Context";
 
 const PaymentForm = () => {
+  const context = useContext(Context);
   const [state, setState] = useState({
     number: "",
-    name: "",
+    name: context.appState.name,
     expiry: "",
     cvc: "",
     focus: "",
@@ -27,12 +29,31 @@ const PaymentForm = () => {
     });
   };
 
+  // console.log(context)
+
   const processPayment = () => {
-    console.log("number => ", state.number);
-    console.log("name => ", state.name);
-    console.log("expiry => ", state.expiry);
-    console.log("cvc => ", state.cvc);
-    console.log(JSON.stringify(state));
+    // console.log("number => ", state.number);
+    // console.log("name => ", state.name);
+    // console.log("expiry => ", state.expiry);
+    // console.log("cvc => ", state.cvc);
+    // console.log(JSON.stringify(state));
+
+    let data = {
+      num: state.number,
+      type: state.type,
+      expiration_dt: state.expiry,
+      cvv: state.cvc,
+      uid: context.appState.registro.id,
+    };
+    // console.log("datos",data)
+
+    fetch("http://127.0.0.1:8000/mande/paymentMethod/register", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      // .then((res) => console.log(res));
   };
 
   return (
@@ -40,13 +61,13 @@ const PaymentForm = () => {
       <div className="container_card">
         <div className="card-body">
           <div className="tarjeta">
-          <Cards
-            number={state.number}
-            name={state.name}
-            expiry={state.expiry}
-            cvc={state.cvc}
-            focused={state.focus}
-          />
+            <Cards
+              number={state.number}
+              name={state.name}
+              expiry={state.expiry}
+              cvc={state.cvc}
+              focused={state.focus}
+            />
           </div>
           <form className="formulario">
             <div className="form-group">
@@ -64,9 +85,11 @@ const PaymentForm = () => {
             <div className="form-group">
               <label htmlFor="name">Nombre</label>
               <input
+                disabled
                 type="text"
                 name="name"
                 id="name"
+                defaultValue={context.appState.name}
                 maxLength="30"
                 className="form-control"
                 onChange={handleInputChange}
@@ -103,7 +126,6 @@ const PaymentForm = () => {
                   type="text"
                   name="type"
                   id="type"
-                  maxLength="4"
                   className="form-control"
                   onChange={handleInputChange}
                   onFocus={handleFocusChange}
@@ -116,7 +138,7 @@ const PaymentForm = () => {
               type="button"
               className="btn btn-success btn-block btn-lg"
             >
-              Pagar
+              Validar datos
             </button>
           </form>
         </div>

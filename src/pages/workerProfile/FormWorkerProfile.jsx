@@ -18,8 +18,8 @@ const FormWorkerProfile = ( {type} ) => {
   const [info,setInfo] = useState([])
   const headerToken = {
     headers: {
-      Authorization: `Token bacbeb47fe753e75eeaf60115fbcd7a19dd2c901`,
-      "Content-type": "application/json",
+      "Content-type": "application/json" ,
+      Authorization: window.localStorage.loginUser
     },
   };
   const obtenerDatos=async () => {
@@ -114,7 +114,7 @@ const FormWorkerProfile = ( {type} ) => {
         padding={"30px"}
       >
         <Formik
-        enableReinitialize
+          enableReinitialize
           onSubmit={handleFormSubmit}
           initialValues={initialValues}
           validationSchema={checkoutSchema}
