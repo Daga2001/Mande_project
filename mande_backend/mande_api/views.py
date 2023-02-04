@@ -782,7 +782,7 @@ def get_profile_img(request):
 
 # Método para validar los datos ingresados de una tarjeta.
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_client_in_service(request):
@@ -791,8 +791,13 @@ def get_client_in_service(request):
     except User.DoesNotExist:
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Worker":
-        service = Service.objects.filter(sid = request.data["sid"])
-        serializer = ServiceSerializerDetailed(service, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        services = Service.objects.filter(sid = request.data["sid"])
+        print("serv:::",services[0])
+        clients = []
+        for serv in services:
+            serializer = ServiceSerializerDetailed(serv, many=True)
+            for data in serializer.data:
+                clients.append(data)
+        return Response(clients, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": 'Only workers allowed!'}, status=status.HTTP_404_NOT_FOUND)
