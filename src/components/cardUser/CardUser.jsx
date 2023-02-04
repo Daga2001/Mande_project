@@ -12,6 +12,7 @@ const CardWorker = ( {type} ) => {
   const [average,setAverage] = useState(0.0)
   const [nombre,setNombre] = useState("")
   const [imagenes,setImagenes] = useState([])
+  const [img,setImg] = useState([])
   const headerToken = {
     headers: {
       "Content-type": "application/json" ,
@@ -33,8 +34,18 @@ const CardWorker = ( {type} ) => {
   }
 
   const obtenerFoto = async() => {
-
+    let config = {
+      method: "GET",
+      headers: headerToken.headers,
+    }
+    const link="http://127.0.0.1:8000/mande/worker/image/view"
+    const response = await fetch(link,config)
+    const data = await response.json()
+    let fullURL = `http://127.0.0.1:8000${data[0].prof_img_data}`
+    console.log("fullURL:",fullURL)
+    setImg(fullURL)
   }
+
   const onImageChange = async (input) => {
     let msg = document.getElementById("msg-screen");
     msg.style.display = 'none';
@@ -66,12 +77,13 @@ const CardWorker = ( {type} ) => {
 
   useEffect(() => {
     obtenerDatos();
+    obtenerFoto();
   },[type]);
 
   return (
     <Box textAlign='center' sx={{m: '0 20px'}}>
       <Card sx={{maxWidth: '1000px'}}>
-        <Avatar sx={{width: 200, height: 200, margin: '20px auto', border: '5px solid rgb(3,9,94)'}} src={profilepicture}/>
+        <Avatar sx={{width: 200, height: 200, margin: '20px auto', border: '5px solid rgb(3,9,94)'}} src={img}/>
         <Typography align='center' sx={{margin: '10px auto'}}>
           {nombre}
         </Typography>
