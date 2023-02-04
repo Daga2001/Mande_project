@@ -7,13 +7,12 @@ export default function ContextProvider({ children }) {
   let data = {
     sidebar: {
       page: "Home",
-      collapsed: false,
+      collapsed: false
     },
     registro: {
       id: null,
-      trabajador: false,
-    },
-    roll: null,
+      trabajador: false
+    }
   };
   const [appState, setAppState] = useState(data);
   return (

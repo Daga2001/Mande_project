@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import Sidebar from "../../components/sidebar/Sidebar";
+import WorkerSidebar from "../../components/sidebar/WorkerSidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Header from "../../components/header/Header";
 import FormWorkerProfile from "./FormWorkerProfile";
@@ -9,7 +9,7 @@ import Grid from "@mui/material/Grid";
 const WorkerProfile = () => {
   return (
     <Box display={"flex"}>
-      <Sidebar />
+      <WorkerSidebar />
       <Box width={"100%"}>
         <Topbar />
         <Header title={"Perfil"} subtitle={"Tu perfil"} />
