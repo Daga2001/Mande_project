@@ -19,6 +19,7 @@ const FormRegistration2 = () => {
   const navigate = useNavigate();
   const [t, i18n] = useTranslation("registration");
   const context = useContext(Context);
+  const [enviar, setEnviar] = useState(true);
 
   let provideService = context.appState.registro.trabajador;
   let id = context.appState.registro.id;
@@ -84,7 +85,7 @@ const FormRegistration2 = () => {
               variant="contained"
               component="label"
               endIcon={<PhotoCamera />}
-              sx={{ gridColumn: "span 2" }}
+              sx={{ gridColumn: "span 2", margin: "5px" }}
             >
               {t("registration1.profile-photo")}
               <input type="file" hidden onChange={onImageChange} />
@@ -95,7 +96,7 @@ const FormRegistration2 = () => {
               variant="contained"
               component="label"
               endIcon={<PhotoCamera />}
-              sx={{ gridColumn: "span 2" }}
+              sx={{ gridColumn: "span 2", margin: "5px" }}
             >
               {t("registration1.id-photo")}
               <input type="file" hidden onChange={onImageChange} />
@@ -121,7 +122,7 @@ const FormRegistration2 = () => {
               </Box>
             </Box>
           ) : (
-            provideService != null && (
+            provideService === false && (
               <Box paddingTop={"30px"}>
                 <h3>{t("registration2.no.sub-title")}</h3>
                 <PaymentForm />
@@ -131,7 +132,7 @@ const FormRegistration2 = () => {
               </Box>
             )
           )}
-          {(provideService === true || provideService === false) && (
+          {enviar === true && (
             <Box className="send">
               <Button
                 variant="outlined"
