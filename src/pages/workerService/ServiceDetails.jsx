@@ -1,11 +1,21 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Grid, Button, IconButton, useTheme, TextField, FormControl, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Button,
+  IconButton,
+  useTheme,
+  TextField,
+  FormControl,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import * as yup from "yup";
-import React from 'react';
-import servicio1 from '../../assets/Servicio1.png';
-import estrellafull from '../../assets/estrellafull.png';
-import estrella from '../../assets/estrella.png';
-import ver from '../../assets/ver.png';
+import React from "react";
+import servicio1 from "../../assets/Servicio1.png";
+import estrellafull from "../../assets/estrellafull.png";
+import estrella from "../../assets/estrella.png";
+import ver from "../../assets/ver.png";
 import Header from "../../components/header/Header";
 import "./ServiceDetails.scss";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -15,7 +25,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
 import {  headerToken } from "../../data/headertoken";
 
-const ServiceDetails = () => {
+const ServiceDetails = ( {type} ) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const context = useContext(Context);
@@ -24,14 +34,129 @@ const ServiceDetails = () => {
     const [metodo,setMetodo] = useState('');
     const [show, setShow] = useState(true);
     const [show2, setShow2] = useState(false);
+    const [datosServicio,setDatosServicio] = useState([])
+    const [estado,setEstado] = useState("")
+    const [datosCliente,setDatosCliente] = useState([])
+    const [nombre,setNombre]= useState("")
+    const [direccion,setDireccion] = useState("")
+    const [email,setEmail] = useState("")
+
     const handleChange = (event) => {
         setMetodo(event.target.value);
       };
-    
-    const handleButtonClick1 = () => {
+
+      const obtenerDatosCliente = async() => {
+        const config={
+          method: "POST",
+          headers: { 
+            "Content-type": "application/json" ,
+            Authorization: window.localStorage.loginUser
+          },
+          body:JSON.stringify({
+            "sid":location.state?.sid
+          })
+        }
+        const link="http://127.0.0.1:8000/mande/worker/service/client/info"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+          setDatosCliente(data)
+        }
+
+    const obtenerDatosServicio= async() => 
+  {
+    const config = {
+      method: "POST",
+      headers: { 
+        "Content-type": "application/json" ,
+        Authorization: window.localStorage.loginUser
+      },
+      body:JSON.stringify({
+        "sid":location.state?.sid
+      })
+    }
+    console.log(id)
+    fetch("http://127.0.0.1:8000/mande/service/view",config).then((res) => res.json()).then((res) => 
+    {
+    setDatosServicio(res.map(e =>(
+      {
+        sid:e.sid,
+        rating:e.rating,
+        status:e.status,
+        description:e.description,
+        client_id:e.client.user_id,
+        worker_id:e.worker.user_id,
+        jid:e.job.jid,
+        card_num:e.card_num
+      } )))
+    })
+  }
+      const enviarCorreo = async() => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({"sid":location.state?.sid})
+          }
+          const link="http://127.0.0.1:8000/mande/user/notify"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+    }
+    const cambiarEstado = async() => {
+        console.log(rating)
+    const config = {
+      method: "PUT",
+      headers: { 
+        "Content-type": "application/json" ,
+        Authorization: window.localStorage.loginUser
+      },
+      body: JSON.stringify(
+        {
+        'sid':datosServicio[0].sid,
+        'rating':datosServicio[0].rating,
+        'status':estado,
+        'description':datosServicio[0].description,
+        'client_id':datosServicio[0].client_id,
+        'worker_id':datosServicio[0].worker_id,
+        'jid':datosServicio[0].jid,
+        'card_num':datosServicio[0].card_num
+      })}
+    console.log(config.body)
+        const link = "http://127.0.0.1:8000/mande/service/info/update"
+        fetch(link,config).then((res)=> res.json()).then((res)=>{console.log(res)})
+    }
+
+    const handleButtonClick1 = (estado) => {
         setShow(prev => !prev);
+        setEstado(estado)
+        obtenerDatosServicio()
+        cambiarEstado()
+        enviarCorreo()
         setShow2(prev => !prev);
     }
+
+    const cargarDatos = () => {
+      obtenerDatosCliente()
+      setNombre(datosCliente[0].nombre + " " + datosCliente[0].apellido)
+      setDireccion("Calle: "+ datosCliente[0].direccion.calle + " Ciudad: " + datosCliente[0].direccion.ciudad + " Pais: " + datosCliente[0].direccion.pais + " Codigo Postal: " + datosCliente[0].direccion.cod_postal)
+      setEmail(datosCliente[0].email)
+    }
+
+    const Finalizar = () =>
+    {
+        setEstado("Terminado")
+        obtenerDatosServicio()
+        cambiarEstado()
+        enviarCorreo()
+        navigate("../home")
+    }
+
+    useEffect(() => {
+        if(estado!="Pendiente"){
+            setShow(prev => !prev);
+            setShow2(prev => !prev);
+        }
+    },[type])
 
 
   return (
@@ -49,10 +174,7 @@ const ServiceDetails = () => {
                             <h2> {location.state?.title}</h2>
                         </Grid>
                         <Grid item>
-                            <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod
-tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam,
-quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
+                            <p> {location.state?.description} </p>
                         </Grid>
                       </Grid>
                    </Grid>
@@ -68,14 +190,14 @@ consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
                             <Grid container direction="row" spacing={3} id="trabajo">
                                 
                                 <Grid item>
-                                <Button variant="contained" onClick={handleButtonClick1}>Aceptar Trabajo</Button>
+                                <Button variant="contained" onClick={() => handleButtonClick1("Aceptado")}>Aceptar Trabajo</Button>
                                 </Grid>
                                 <Grid item>
-                                <Button variant="contained" onClick={handleButtonClick1}>Rechazar Trabajo </Button>
+                                <Button variant="contained" onClick={() => handleButtonClick1("Rechazado")}>Rechazar Trabajo </Button>
                                 </Grid> 
                             </Grid>)}
                         {show2 && (<Grid item id="terminar" visibility={false}>
-                            <Button variant="contained">Terminar y Notificar Servicio </Button>
+                            <Button variant="contained" onClick={Finalizar}>Terminar y Notificar Servicio </Button>
                             </Grid>)}
                         </Grid>
                         
@@ -91,29 +213,24 @@ consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate</p>
                 variant="filled"
                 type="text"
                 label="Nombre"
-                value=""
+                value={nombre}
                 />
                 <TextField
                 disabled
                 variant="filled"
                 type="text"
                 label="Direccion"
-                value=""
+                value={direccion}
                 />
                 <TextField
                 disabled
                 variant="filled"
                 type="text"
-                label="Metodo de pago"
-                value=""
+                label="Correo"
+                value={email}
                 />
-                <h2> Descripcion del Trabajo </h2>
-                <p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod
-tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam,
-quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate </p>
-                <Button variant="contained"> Verificar Dirección </Button>
                 </FormControl>
+                <Button variant="contained" onClick={cargarDatos}> Cargar Datos del Cliente </Button>
             </Box>
 
         </div>

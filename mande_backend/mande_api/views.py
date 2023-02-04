@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken, AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from mande_api.serializers import UserSerializer, GpsLocationSerializer, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer, ServiceSerializerDetailed, HistorySerializer
+from mande_api.serializers import UserSerializer, GpsLocationSerializer, HistorySerializerSimple, AddressSerializer, WorkerSerializer, WorkerImgSerializer, ReceiptImgSerializer, JobSerializer, ClientSerializer, WorkerJobSerializer, WorkerJobSerializerDetailedJob, WorkerJobSerializerDetailedWorker, PaymentMethodSerializer, ServiceSerializer, ServiceSerializerDetailed, HistorySerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -455,9 +455,13 @@ def login_user(request):
 
         print("user:",request.data)
         try:
-            client = Client.objects.get(phone = hexPhone)
+            client = Client.objects.get(user = user, phone = hexPhone)
             token = Token.objects.get(user_id=user.uid)
-            return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
+            reqdata = {
+                "token": token.key,
+                "user": user.type
+            }
+            return Response({"answer": True, "description": reqdata }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"answer": False, "description": 'Client does not exist'}, status=status.HTTP_404_NOT_FOUND)
     elif user.type == "Worker":
@@ -465,9 +469,13 @@ def login_user(request):
         hashedPassword.update(request.data["password"].encode())
         hexPassword = hashedPassword.hexdigest()
         try:
-            worker = Worker.objects.get(password = hexPassword)
+            worker = Worker.objects.get(user = user, password = hexPassword)
             token = Token.objects.get(user_id=user.uid)
-            return Response({"answer": True, "description": token.key }, status=status.HTTP_200_OK)
+            reqdata = {
+                "token": token.key,
+                "user": user.type
+            }
+            return Response({"answer": True, "description": reqdata }, status=status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"answer": False, "description": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
@@ -504,7 +512,7 @@ def get_my_data(request):
     
 # Método para que un trabador o cliente pueda leer en detalle un servicio prestado
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def read_detailed_service(request):
@@ -551,6 +559,15 @@ def view_history(request):
         history = History.objects.filter(client_id=user.uid)
         serializer = HistorySerializer(history, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    elif user.type == "Worker":
+        services_worker = Service.objects.filter(worker_id=user.uid)
+        history_data = []
+        for service in services_worker:
+            history = History.objects.filter(sid=service.sid)
+            serializer = HistorySerializer(history, many=True)
+            for data in serializer.data:
+                history_data.append(data)
+        return Response(history_data, status=status.HTTP_200_OK)
     else:
         return Response({"error": True, "error_cause": "There're no available services!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -587,7 +604,7 @@ def register_history(request):
         return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     if user.type == "Client":
         request.data["client_id"] = user.uid
-        serializer = HistorySerializer(data=request.data, many=False)
+        serializer = HistorySerializerSimple(data=request.data, many=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -744,3 +761,53 @@ def validate_card(request):
         return Response({"answer": True, "detail": 'Valid payment method!'}, status=status.HTTP_404_NOT_FOUND)
     except Payment_Method.DoesNotExist:
         return Response({"answer": False, "detail": 'Invalid payment method!'}, status=status.HTTP_404_NOT_FOUND)
+    
+# Método para validar los datos ingresados de una tarjeta.
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_profile_img(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        image = Worker_img_data.objects.filter(worker_id=user.uid)
+        serializer = WorkerImgSerializer(image, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": True, "error_cause": 'Only workers can have profile image!'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+# Método para validar los datos ingresados de una tarjeta.
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_client_in_service(request):
+    try:
+        user = Token.objects.get(key=request.auth.key).user
+    except User.DoesNotExist:
+        return Response({"error": True, "error_cause": 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    if user.type == "Worker":
+        print("request:",request.data["sid"])
+        services = Service.objects.filter(sid = request.data["sid"])
+        clients = []
+        for serv in services:
+            dataBody = {
+                "client_id": serv.client_id.user.uid,
+                "nombre": serv.client_id.user.f_name,
+                "apellido": serv.client_id.user.l_name,
+                "direccion": {
+                    "calle": serv.client_id.user.address_id.street,
+                    "ciudad": serv.client_id.user.address_id.city,
+                    "pais": serv.client_id.user.address_id.country,
+                    "cod_postal": serv.client_id.user.address_id.postal_code,
+                },
+                "email": serv.client_id.user.email,
+            }
+            clients.append(dataBody)
+        return Response(clients, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": True, "error_cause": 'Only workers allowed!'}, status=status.HTTP_404_NOT_FOUND)

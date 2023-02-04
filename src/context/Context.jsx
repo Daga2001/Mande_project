@@ -11,8 +11,10 @@ export default function ContextProvider({ children }) {
     },
     registro: {
       id: null,
-      trabajador: false
-    }
+      trabajador: false,
+    },
+    roll: null,
+    name: null
   };
   const [appState, setAppState] = useState(data);
   return (

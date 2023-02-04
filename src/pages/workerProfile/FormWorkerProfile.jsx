@@ -18,8 +18,8 @@ const FormWorkerProfile = ( {type} ) => {
   const [info,setInfo] = useState([])
   const headerToken = {
     headers: {
-      Authorization: `Token bacbeb47fe753e75eeaf60115fbcd7a19dd2c901`,
-      "Content-type": "application/json",
+      "Content-type": "application/json" ,
+      Authorization: window.localStorage.loginUser
     },
   };
   const obtenerDatos=async () => {
@@ -61,6 +61,7 @@ const FormWorkerProfile = ( {type} ) => {
 
   useEffect(() => {
     obtenerDatos();
+    console.log(headerToken)
   },[type]);
 
   const handleFormSubmit = (values) => {
@@ -69,7 +70,7 @@ const FormWorkerProfile = ( {type} ) => {
         f_name:values.firstName,
         l_name:values.lastName,
         uid:values.idNumber,
-        birth_dt:values.dateBird,
+        birth_dt:values.dateBirth,
         address_id:values.address,
         email:values.email,
         password: values.password
@@ -101,7 +102,7 @@ const FormWorkerProfile = ( {type} ) => {
     firstName: info.f_name,
     lastName: info.l_name,
     idNumber: info.uid,
-    dateBird: info.birth_dt,
+    dateBirth: info.birth_dt,
     address: info.address_id,
     email: info.email,
     password: info.password,
@@ -114,7 +115,7 @@ const FormWorkerProfile = ( {type} ) => {
         padding={"30px"}
       >
         <Formik
-        enableReinitialize
+          enableReinitialize
           onSubmit={handleFormSubmit}
           initialValues={initialValues}
           validationSchema={checkoutSchema}

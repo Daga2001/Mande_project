@@ -202,7 +202,21 @@ class ServiceSerializerDetailed(serializers.ModelSerializer):
         )
 
 class HistorySerializer(serializers.ModelSerializer):
+    service = ServiceSerializer(many=False, read_only=True, source="sid")
+    job = serializers.SerializerMethodField('get_job')
 
+    def get_job(self, values):
+        service_id = getattr(values, 'sid')
+        return service_id.jid.occupation
+     
+    class Meta:
+        model = History
+        fields = (
+            "hid", "amount", "client_id", "service", "job"
+        )
+
+class HistorySerializerSimple(serializers.ModelSerializer):
+     
     class Meta:
         model = History
         fields = (

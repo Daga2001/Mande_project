@@ -6,7 +6,6 @@ import servicio1 from '../../assets/Servicio1.png';
 import Header from "../../components/header/Header";
 import "./ServicesList.scss";
 import { useNavigate } from "react-router-dom";
-import {  headerToken } from "../../data/headertoken";
 import { Context } from "../../context/Context";
 
 const ServicesList = ( {type} ) => {
@@ -15,11 +14,19 @@ const ServicesList = ( {type} ) => {
     const context = useContext(Context);
 
     const obtenerTrabajos=async () => {
-      const config = headerToken;
+      const config = {
+        method: "GET",
+        headers: { 
+          "Content-type": "application/json" ,
+          Authorization: window.localStorage.loginUser
+        },
+      }
+      console.log("config:", config)
       const link = "http://127.0.0.1:8000/mande/jobs/view"
       const response=await fetch(link,config)
       const data = await response.json()
       setDatosTrabajo(data)
+      console.log("data:", data)
     }
 
     const handleClick= (value) => {

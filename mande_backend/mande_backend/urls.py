@@ -75,6 +75,7 @@ urlpatterns = [
     views.send_email, name="req_service"),
     path('mande/paymentMethod/validate',
     views.validate_card, name="req_service"),
+    path('mande/worker/service/client/info', views.get_client_in_service, name="req_service")
 ]
 
 

@@ -13,9 +13,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
 import { Context } from "../../context/Context";
-//import {  headerToken } from "../../data/headertoken";
+import { minHeight } from "@mui/system";
 
-const ServiceDetails = () => {
+const ServiceDetails = ( {type} ) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
@@ -27,10 +27,12 @@ const ServiceDetails = () => {
     const [fechaExpiracion,setFechaExpiracion] = useState("");
     const [cvv, setCvv] = useState(0);
     const [correo,setCorreo] = useState("")
-    const [sid,setSID] = useState("")
+    const [id,setID] = useState(0)
+    const [dataService,setDataService] = useState(0)
+
     const headerToken = {
         headers: {
-          Authorization: `Token fe76dead69219edc32190e91a8d350febcb601cc`,
+          Authorization: window.localStorage.loginUser,
           "Content-type": "application/json",
         },
       };
@@ -49,6 +51,9 @@ const ServiceDetails = () => {
     const handleChangeCvv = (event) => {
         setCvv(event.target.value);
     };
+    const handleChangeDesc = (event) => {
+        setDescripcion(event.target.value);
+    }
     
     const validateData = async () => {
         const config = {
@@ -67,37 +72,79 @@ const ServiceDetails = () => {
           console.log (data)
     }
 
-    const obtenerCorreo = async() => {
+    const obtenerDatos = async() => {
         const config = headerToken;
         const link = "http://127.0.0.1:8000/mande/user/view"
         const response=await fetch(link,config)
         const data = await response.json()
         setCorreo(data.user.email)
+        setID(data.user.uid)
+        console.log(data)
     }
 
     const enviarCorreo = async() => {
         const config = {
             method: 'POST',
             headers: headerToken.headers,
-            body: JSON.stringify({"sid":1})
+            body: JSON.stringify({"sid":dataService})
           }
           const link="http://127.0.0.1:8000/mande/user/notify"
           const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+    }
 
+    const crearServicio = async() => {
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({
+                "description":descripcion,
+                "client_id":id,
+                "worker_id":location.state?.wid,
+                "jid":location.state?.jid,
+                "card_num":numeroTarjeta
+            })
+          }
+          const link="http://127.0.0.1:8000/mande/service/request"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
+          setDataService(data.sid)
+    }
+
+    const crearHistoria = async() => {
+        console.log(dataService)
+        const config = {
+            method: 'POST',
+            headers: headerToken.headers,
+            body: JSON.stringify({
+                "amount":location.state?.precio,
+                "sid":dataService,
+            })
+          }
+          const link="http://127.0.0.1:8000/mande/history/create"
+          const response = await fetch(link,config)
+          const data = await response.json()
+          console.log(data)
     }
 
     const handleClick = () => {
         if (validateData())
         {
-            setSID(location.state?.sid)
-            obtenerCorreo()
+            obtenerDatos()
+            crearServicio()
+            crearHistoria() 
             enviarCorreo()
+            //navigate("../home")
         }
-        else{
-           
-        }
-        
+        else{ 
+        }   
     }
+
+    useEffect(() => {
+        obtenerDatos();
+      },[type]);
 
   return (
     <div>
@@ -109,7 +156,7 @@ const ServiceDetails = () => {
                     <img src={servicio1} height="150" width="150"/>
                     </Grid>
                     <Grid item>
-                    <Grid container direction="column" spacing={0.5} justifyContent="center" alignItems="baseline">
+                    <Grid container direction="column" spacing={1} justifyContent="center" alignItems="baseline">
                         <Grid item>
                             <h2> {location.state?.title} </h2>
                         </Grid>
@@ -126,15 +173,15 @@ const ServiceDetails = () => {
                         <h2> Paso Final</h2>
                         </Grid>
                         <Grid item>
-                            <p> Precio hora: 1000% </p>
+                            <p>Precio Final: {location.state?.precio}</p>
                         </Grid>
                         <Grid item>
-                            <p> Añada una descripción al favor a realizar </p>
+                            <h2>Colocar descripcion del Servicio</h2>
                         </Grid>
-                        <Grid item >
-                        <FormControl fullWidth gap="30px" >
-                            <TextField value={descripcion} onChange={handleChange} id="descripcion" variant="filled"/>
-                        </FormControl>
+                        <Grid item>
+                            <FormControl fullWidth gap="30px">
+                                <TextField value={descripcion} onChange={handleChangeDesc} label="Descripcion" variant="filled"/>
+                            </FormControl>
                         </Grid>
                         <Grid item>
                             <p> Añada la información de la tarjeta</p>
