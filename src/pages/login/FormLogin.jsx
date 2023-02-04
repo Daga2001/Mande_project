@@ -9,10 +9,13 @@ import { useTranslation } from "react-i18next";
 import TopbarLandingPage from "../../components/topbarLandingPage.jsx/TopbarLandingPage";
 import { useNavigate } from "react-router-dom";
 import { WifiTetheringErrorRoundedTwoTone } from "@mui/icons-material";
+import { useContext } from "react";
+import { Context } from "../../context/Context";
 
 const FormLogin = () => {
   const [t, i18n] = useTranslation("login");
   const navigate = useNavigate();
+  const context = useContext(Context);
 
   // Creating schema
   let schema = Yup.object().shape({
