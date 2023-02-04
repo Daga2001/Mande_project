@@ -787,6 +787,7 @@ def get_client_in_service(request):
         clients = []
         for serv in services:
             dataBody = {
+                "client_id": serv.client_id.user.uid,
                 "nombre": serv.client_id.user.f_name,
                 "apellido": serv.client_id.user.l_name,
                 "direccion": {
