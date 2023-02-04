@@ -44,7 +44,7 @@ const ServiceDetails = ( {type} ) => {
     const handleChange = (event) => {
         setMetodo(event.target.value);
       };
-
+//FINAL
       const obtenerDatosCliente = async() => {
         const config={
           method: "POST",
