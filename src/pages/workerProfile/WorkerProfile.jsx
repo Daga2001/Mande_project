@@ -23,7 +23,7 @@ const WorkerProfile = () => {
             <Header title={"Perfil"} subtitle={"Tu perfil"} />
             <Box height={"100%"} width={"100%"} display={"flex"}>
               <Grid>
-                <FormWorkerProfile />
+                {/* <FormWorkerProfile /> */}
               </Grid>
               <Grid>
                 <CardUser />
