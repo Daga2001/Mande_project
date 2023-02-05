@@ -688,13 +688,13 @@ def send_email(request):
 
             Gracias por adquirir nuestros servicios.
 
-            Le notificamos que su pedido fue {status} por nuestro trabajador, si desea
+            Le notificamos que el estado de su pedido es: {status}, si desea
             puede comuncicarse con uno de nuestros operadores para más informacion sobre
             su pedido.
 
             Atentamente,
             Mande team
-        '''.format(name=service.worker_id.user.f_name, lastName=service.worker_id.user.l_name, status=service.status)
+        '''.format(name=service.client_id.user.f_name, lastName=service.client_id.user.l_name, status=service.status)
         
         receiver = service.client_id.user.email
         

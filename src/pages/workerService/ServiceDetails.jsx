@@ -119,14 +119,16 @@ const ServiceDetails = ( {type} ) => {
         'card_num':serv[0].card_num
       })}
         const link = "http://127.0.0.1:8000/mande/service/info/update"
-        fetch(link,config).then((res)=> res.json()).then((res)=>{console.log(res)})
+        let res = await fetch(link,config)
+        return res.json
     }
 
     const handleButtonClick1 = async () => { 
       const serv = await obtenerDatosServicio()
       console.log("serv:",serv)
-      cambiarEstado(serv, "Aceptado")
-      enviarCorreo()
+      const stats = await cambiarEstado(serv, "Aceptado")
+      console.log("stats:", stats)
+      await enviarCorreo()
       setShow(prev => !prev);
       navigate("../home");
     // if(click == 2){
@@ -139,8 +141,9 @@ const ServiceDetails = ( {type} ) => {
     const handleButtonClick2 = async () => {
       const serv = await obtenerDatosServicio()
       console.log("serv:",serv)
-      cambiarEstado(serv, "Rechazado")
-      enviarCorreo()
+      const stats = await cambiarEstado(serv, "Rechazado")
+      console.log("stats:", stats)
+      await enviarCorreo()
       setShow(prev => !prev);
       navigate("../home")
     // if(click == 2){
@@ -161,12 +164,13 @@ const ServiceDetails = ( {type} ) => {
 
     const Finalizar = async () =>
     {
-        const serv = await obtenerDatosServicio()
-        console.log("serv:",serv)
-        cambiarEstado(serv, "Terminado")
-        enviarCorreo()
-        setShow2(prev => !prev);
-        navigate("../home")
+      const serv = await obtenerDatosServicio()
+      console.log("serv:",serv)
+      const stats = await cambiarEstado(serv, "Terminado")
+      console.log("stats:", stats)
+      await enviarCorreo()
+      setShow2(prev => !prev);
+      navigate("../home")
       // if(click == 2){
       //   setShow2(prev => !prev);
       //   navigate("../home")
