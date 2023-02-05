@@ -87,17 +87,18 @@ const ServiceDetails = ( {type} ) => {
         console.log("answer datos:",data)
     }
 
-    const enviarCorreo = async() => {
+    const enviarCorreo = async(serv_id) => {
         const config = {
             method: 'POST',
             headers: headerToken.headers,
-            body: JSON.stringify({"sid":dataService})
+            body: JSON.stringify({"sid":serv_id})
           }
           console.log("config correo:", config)
           const link="http://127.0.0.1:8000/mande/user/notify"
           const response = await fetch(link,config)
           const data = await response.json()
           console.log(data)
+          return data
     }
 
     const crearServicio = async() => {
@@ -117,31 +118,34 @@ const ServiceDetails = ( {type} ) => {
           const data = await response.json()
           console.log(data)
           setDataService(data.sid)
+          return data.sid
     }
 
-    const crearHistoria = async() => {
-        console.log(dataService)
+    const crearHistoria = async(serv_id) => {
+        console.log(serv_id)
         const config = {
             method: 'POST',
             headers: headerToken.headers,
             body: JSON.stringify({
                 "amount":location.state?.precio,
-                "sid":dataService,
+                "sid":serv_id,
             })
           }
           const link="http://127.0.0.1:8000/mande/history/create"
           const response = await fetch(link,config)
           const data = await response.json()
           console.log(data)
+          return data
     }
 
-    const handleClick = () => {
+    const handleClick = async () => {
         if (validateData())
         {
-            obtenerDatos()
-            crearServicio()
-            crearHistoria() 
-            enviarCorreo()
+            await obtenerDatos()
+            const serv_id = await crearServicio()
+            const hist_id = await crearHistoria(serv_id) 
+            const send_res = await enviarCorreo(serv_id)
+            console.log("send_res:", send_res)
             //navigate("../home")
         }
         else{ 

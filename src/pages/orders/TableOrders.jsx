@@ -4,7 +4,7 @@ import * as utils from '../../utils/utils'
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState, useEffect } from "react";
 import { Co2Sharp } from '@mui/icons-material';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 
 const TableOrders = () => {
   const navigate = useNavigate()
