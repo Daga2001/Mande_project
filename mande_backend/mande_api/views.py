@@ -85,7 +85,7 @@ def upload_images(request):
     if request.method == "POST":
         if user.type == "Worker":
             dataBody = {
-                "idc_img_data": request.data["idc_img_data"],   
+                "idc_img_data": idc_img,   
                 "prof_img_data": request.data["prof_img_data"],
                 "worker_id": user.uid
             }
@@ -120,8 +120,13 @@ def upload_images(request):
                 worker_img_data = Worker_img_data.objects.get(worker_id=user.uid)
             except Worker_img_data.DoesNotExist:
                 return Response({"error": True}, status=status.HTTP_404_NOT_FOUND)
+            idc_img = None
+            if "idc_img_data" in request.data:
+                idc_img = request.data["idc_img_data"]
+            else:
+                idc_img = worker_img_data.idc_img_data
             dataBody = {
-                "idc_img_data": request.data["idc_img_data"],   
+                "idc_img_data": idc_img,   
                 "prof_img_data": request.data["prof_img_data"],
                 "worker_id": user.uid
             }

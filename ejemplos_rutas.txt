@@ -61,8 +61,8 @@ se requiere token para autenticar al cliente o trabajador.
 se debe crear un formdata con esta estructura:
 
 const body = new FormData();
-body.append("idc_img_data", imagenes[i], imagenes[i].idc);
-body.append("prof_img_data", imagenes[i], imagenes[i].prof); 
+body.append("idc_img_data", imagenes[i], imagenes[i].name);
+body.append("prof_img_data", imagenes[i], imagenes[i].name); 
 body.append("uid", ID_DEL_USUARIO);
 
 para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
@@ -71,7 +71,7 @@ para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
 se debe crear un formdata con esta estructura:
 
 const body = new FormData();
-body.append("receipt_data", imagenes[i], imagenes[i].receipt);
+body.append("receipt_data", imagenes[i], imagenes[i].name);
 body.append("uid", ID_DEL_USUARIO);
 
 para mayor claridad revisar el ejemplo que hay en DS1 :v (reg_commerce)
