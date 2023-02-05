@@ -23,8 +23,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Context } from "../../context/Context";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
-import {  headerToken } from "../../data/headertoken";
-
 
 const ServiceDetails = ( {type} ) => {
     const theme = useTheme();
@@ -42,7 +40,7 @@ const ServiceDetails = ( {type} ) => {
     const [direccion,setDireccion] = useState("")
     const [email,setEmail] = useState("")
     const [cambiado,setCambiado] = useState(false)
-    const [click,setClick] = useState(0)
+    const [click,setClick] = useState(0) 
 
     const handleChange = (event) => {
         setMetodo(event.target.value);
@@ -59,12 +57,14 @@ const ServiceDetails = ( {type} ) => {
             "sid":location.state?.sid
           })
         }
+        console.log("config datos cli:", config)
         const link="http://127.0.0.1:8000/mande/worker/service/client/info"
           const response = await fetch(link,config)
           const data = await response.json()
           console.log(location.state?.sid)
           console.log(data)
           setDatosCliente(data)
+          return data;
         }
 
     const obtenerDatosServicio= async() => 
@@ -79,16 +79,19 @@ const ServiceDetails = ( {type} ) => {
         "sid":location.state?.sid
       })
     }
-    fetch("http://127.0.0.1:8000/mande/service/view",config).then((res) => res.json()).then((res) => 
-    {
-    setDatosServicio(res)
-    })
-    console.log("datosServicio:",datosServicio)
+    let serv = await fetch("http://127.0.0.1:8000/mande/service/view",config)
+    let datosServ = await serv.json()
+    setDatosServicio(datosServ)
+    console.log("datosServicio:",datosServ)
+    return datosServ
   }
     const enviarCorreo = async() => {
         const config = {
             method: 'POST',
-            headers: headerToken.headers,
+            headers: { 
+              "Content-type": "application/json" ,
+              Authorization: window.localStorage.loginUser
+            },
             body: JSON.stringify({"sid":location.state?.sid})
           }
           const link="http://127.0.0.1:8000/mande/user/notify"
@@ -97,7 +100,7 @@ const ServiceDetails = ( {type} ) => {
           console.log(data)
     }
 
-    const cambiarEstado = async() => {
+    const cambiarEstado = async(serv, estado) => {
     const config = {
       method: "PUT",
       headers: { 
@@ -106,66 +109,71 @@ const ServiceDetails = ( {type} ) => {
       },
       body: JSON.stringify(
         {
-        'sid':datosServicio[0].sid,
-        'rating':datosServicio[0].rating,
-        'status':estado,
-        'description':datosServicio[0].description,
-        'client_id':datosServicio[0].client.user_id,
-        'worker_id':datosServicio[0].worker.user_id,
-        'jid':datosServicio[0].job.jid,
-        'card_num':datosServicio[0].card_num
+        'sid':serv[0].sid,
+        'rating':serv[0].rating,
+        'status': estado,
+        'description':serv[0].description,
+        'client_id':serv[0].client.user_id,
+        'worker_id':serv[0].worker.user_id,
+        'jid':serv[0].job.jid,
+        'card_num':serv[0].card_num
       })}
         const link = "http://127.0.0.1:8000/mande/service/info/update"
         fetch(link,config).then((res)=> res.json()).then((res)=>{console.log(res)})
     }
 
-    const handleButtonClick1 = () => {
-        
-        setEstado("Aceptado")
-        obtenerDatosServicio()
-        cambiarEstado()
-       enviarCorreo()
-       if(click == 2){
-        setShow(prev => !prev);
-        navigate("../home")
-       }else{
-        setClick(click+2)
-       }
-      
+    const handleButtonClick1 = async () => { 
+      const serv = await obtenerDatosServicio()
+      console.log("serv:",serv)
+      cambiarEstado(serv, "Aceptado")
+      enviarCorreo()
+      setShow(prev => !prev);
+      navigate("../home");
+    // if(click == 2){
+    //   setShow(prev => !prev);
+    //   navigate("../home");
+    // }else{
+    //   setClick(click+2)
+    // }
     }
-    const handleButtonClick2 = () => {
-      
-      setEstado("Rechazado")
-      obtenerDatosServicio()
-      cambiarEstado()
-     enviarCorreo()
-     if(click == 2){
+    const handleButtonClick2 = async () => {
+      const serv = await obtenerDatosServicio()
+      console.log("serv:",serv)
+      cambiarEstado(serv, "Rechazado")
+      enviarCorreo()
       setShow(prev => !prev);
       navigate("../home")
-     }else{
-      setClick(click+2)
-     }
+    // if(click == 2){
+    //   setShow(prev => !prev);
+    //   navigate("../home")
+    // }else{
+    //   setClick(click+2)
+    // }
   }
 
-    const cargarDatos = () => {
-      obtenerDatosCliente()
-      setNombre(datosCliente[0].nombre + " " + datosCliente[0].apellido)
-      setDireccion("Calle: "+ datosCliente[0].direccion.calle + " Ciudad: " + datosCliente[0].direccion.ciudad + " Pais: " + datosCliente[0].direccion.pais + " Codigo Postal: " + datosCliente[0].direccion.cod_postal)
-      setEmail(datosCliente[0].email)
+    const cargarDatos = async () => {
+      const cli = await obtenerDatosCliente()
+      console.log("cli:",cli)
+      setNombre(cli[0].nombre + " " + cli[0].apellido)
+      setDireccion("Calle: "+ cli[0].direccion.calle + " Ciudad: " + cli[0].direccion.ciudad + " Pais: " + cli[0].direccion.pais + " Codigo Postal: " + cli[0].direccion.cod_postal)
+      setEmail(cli[0].email)
     }
 
-    const Finalizar = () =>
+    const Finalizar = async () =>
     {
-        setEstado("Terminado")
-        obtenerDatosServicio()
-        cambiarEstado()
+        const serv = await obtenerDatosServicio()
+        console.log("serv:",serv)
+        cambiarEstado(serv, "Terminado")
         enviarCorreo()
-        if(click == 2){
-          setShow2(prev => !prev);
-          navigate("../home")
-         }else{
-          setClick(click+2)
-         }
+        setShow2(prev => !prev);
+        navigate("../home")
+      // if(click == 2){
+      //   setShow2(prev => !prev);
+      //   navigate("../home")
+      // }
+      // else{
+      //   setClick(click+2)
+      // }
     }
 
     const cambiarBoton = () =>
