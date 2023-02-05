@@ -146,7 +146,7 @@ const ServiceDetails = ( {type} ) => {
             const hist_id = await crearHistoria(serv_id) 
             const send_res = await enviarCorreo(serv_id)
             console.log("send_res:", send_res)
-            //navigate("../home")
+            navigate("../home")
         }
         else{ 
         }   
