@@ -66,7 +66,7 @@ const TableOrders = () => {
     setData(datosProcesados)
   }
 
-  const obtenerDatosServicio= async() => 
+  const obtenerDatosServicio = async(sid) => 
   {
     const config = {
       method: "POST",
@@ -75,13 +75,14 @@ const TableOrders = () => {
         Authorization: window.localStorage.loginUser
       },
       body:JSON.stringify({
-        "sid":id
+        "sid":sid
       })
     }
     console.log(id)
-    fetch("http://127.0.0.1:8000/mande/service/view",config).then((res) => res.json()).then((res) => 
-    {
-      let datosProcesados = []
+    let ans = await fetch("http://127.0.0.1:8000/mande/service/view",config)
+    let res = await ans.json()
+    
+    let datosProcesados = []
     for (let i = 0; i < res.length; i++) {
       datosProcesados.push({
         client_id: res[i].client.user_id,                                                                                                                                                                                                                                                                                                         
@@ -91,17 +92,10 @@ const TableOrders = () => {
       })
     }
     setDatosServicio(datosProcesados)
-    /*setDatosServicio(res.map(e =>(
-      {
-        "client_id":e.client.user_id,
-        "worker_id":e.worker.user_id,
-        "jid":e.job.jid,
-        "card_num":e.card_num
-      } )))*/
-    })
+    return datosProcesados
   }
 
-  const actualizarRatingServicio = async() => {
+  const actualizarRatingServicio = async(datosServ, sid, rating, stat, desc) => {
     console.log(rating)
     const config = {
       method: "PUT",
@@ -111,33 +105,36 @@ const TableOrders = () => {
       },
       body: JSON.stringify(
         {
-        'sid':id,
+        'sid':sid,
         'rating':rating,
-        'status':estado,
-        'description':descripcion,
-        'client_id':datosServicio[0].client_id,
-        'worker_id':datosServicio[0].worker_id,
-        'jid':datosServicio[0].jid,
-        'card_num':datosServicio[0].card_num
+        'status':stat,
+        'description':desc,
+        'client_id':datosServ[0].client_id,
+        'worker_id':datosServ[0].worker_id,
+        'jid':datosServ[0].jid,
+        'card_num':datosServ[0].card_num
       })}
     console.log(config.body)
         const link = "http://127.0.0.1:8000/mande/service/info/update"
         fetch(link,config).then((res)=> res.json()).then((res)=>{console.log(res)})
     }
 
-  const handleStars = (event,value) => {
-    setRating(value)
-    setId(event.id)
-    setDescripcion(event.description)
-    setEstado(event.estadoServicio)
-    obtenerDatosServicio()
-    actualizarRatingServicio()
-    if(click == 1){
-      navigate("../home")
-    }
-    else{
-      setClick(click+1)
-    }
+  const handleStars = async (event,value) => {
+    console.log("rating:",value)
+    console.log("sid:",event.id)
+    console.log("estado:",event.estadoServicio)
+    console.log("desc:",event.description)
+    const datosServ = await obtenerDatosServicio(event.id)
+    console.log("datosServ:", datosServ)
+    const updateRating = await actualizarRatingServicio(datosServ, event.id, value, event.estadoServicio, event.description)
+    console.log("updateRating:", updateRating)
+    navigate("../home")
+    // if(click == 1){
+    //   navigate("../home")
+    // }
+    // else{
+    //   setClick(click+1)
+    // }
   }
 
   const handleChangePage = (event, newPage) => {
