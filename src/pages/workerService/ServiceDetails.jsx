@@ -25,6 +25,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../style/theme";
 import {  headerToken } from "../../data/headertoken";
 
+
 const ServiceDetails = ( {type} ) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -32,7 +33,7 @@ const ServiceDetails = ( {type} ) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [metodo,setMetodo] = useState('');
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
     const [datosServicio,setDatosServicio] = useState([])
     const [estado,setEstado] = useState("")
@@ -40,11 +41,13 @@ const ServiceDetails = ( {type} ) => {
     const [nombre,setNombre]= useState("")
     const [direccion,setDireccion] = useState("")
     const [email,setEmail] = useState("")
+    const [cambiado,setCambiado] = useState(false)
+    const [click,setClick] = useState(0)
 
     const handleChange = (event) => {
         setMetodo(event.target.value);
       };
-
+//FINAL
       const obtenerDatosCliente = async() => {
         const config={
           method: "POST",
@@ -59,6 +62,7 @@ const ServiceDetails = ( {type} ) => {
         const link="http://127.0.0.1:8000/mande/worker/service/client/info"
           const response = await fetch(link,config)
           const data = await response.json()
+          console.log(location.state?.sid)
           console.log(data)
           setDatosCliente(data)
         }
@@ -75,23 +79,13 @@ const ServiceDetails = ( {type} ) => {
         "sid":location.state?.sid
       })
     }
-    console.log(id)
     fetch("http://127.0.0.1:8000/mande/service/view",config).then((res) => res.json()).then((res) => 
     {
-    setDatosServicio(res.map(e =>(
-      {
-        sid:e.sid,
-        rating:e.rating,
-        status:e.status,
-        description:e.description,
-        client_id:e.client.user_id,
-        worker_id:e.worker.user_id,
-        jid:e.job.jid,
-        card_num:e.card_num
-      } )))
+    setDatosServicio(res)
     })
+    console.log("datosServicio:",datosServicio)
   }
-      const enviarCorreo = async() => {
+    const enviarCorreo = async() => {
         const config = {
             method: 'POST',
             headers: headerToken.headers,
@@ -102,8 +96,8 @@ const ServiceDetails = ( {type} ) => {
           const data = await response.json()
           console.log(data)
     }
+
     const cambiarEstado = async() => {
-        console.log(rating)
     const config = {
       method: "PUT",
       headers: { 
@@ -116,24 +110,42 @@ const ServiceDetails = ( {type} ) => {
         'rating':datosServicio[0].rating,
         'status':estado,
         'description':datosServicio[0].description,
-        'client_id':datosServicio[0].client_id,
-        'worker_id':datosServicio[0].worker_id,
-        'jid':datosServicio[0].jid,
+        'client_id':datosServicio[0].client.user_id,
+        'worker_id':datosServicio[0].worker.user_id,
+        'jid':datosServicio[0].job.jid,
         'card_num':datosServicio[0].card_num
       })}
-    console.log(config.body)
         const link = "http://127.0.0.1:8000/mande/service/info/update"
         fetch(link,config).then((res)=> res.json()).then((res)=>{console.log(res)})
     }
 
-    const handleButtonClick1 = (estado) => {
-        setShow(prev => !prev);
-        setEstado(estado)
+    const handleButtonClick1 = () => {
+        
+        setEstado("Aceptado")
         obtenerDatosServicio()
         cambiarEstado()
-        enviarCorreo()
-        setShow2(prev => !prev);
+       enviarCorreo()
+       if(click == 2){
+        setShow(prev => !prev);
+        navigate("../home")
+       }else{
+        setClick(click+2)
+       }
+      
     }
+    const handleButtonClick2 = () => {
+      
+      setEstado("Rechazado")
+      obtenerDatosServicio()
+      cambiarEstado()
+     enviarCorreo()
+     if(click == 2){
+      setShow(prev => !prev);
+      navigate("../home")
+     }else{
+      setClick(click+2)
+     }
+  }
 
     const cargarDatos = () => {
       obtenerDatosCliente()
@@ -148,14 +160,31 @@ const ServiceDetails = ( {type} ) => {
         obtenerDatosServicio()
         cambiarEstado()
         enviarCorreo()
-        navigate("../home")
+        if(click == 2){
+          setShow2(prev => !prev);
+          navigate("../home")
+         }else{
+          setClick(click+2)
+         }
+    }
+
+    const cambiarBoton = () =>
+    {
+      if(cambiado==false) {
+        if(location.state?.estado == "Aceptado" || location.state?.estado == "Rechazado" || location.state?.estado == "Terminado"){
+        setShow(false);
+        setShow2(true);
+        }
+        else{
+          setShow(true);
+          setShow2(false);
+        }
+        setCambiado(true)
+      }
     }
 
     useEffect(() => {
-        if(estado!="Pendiente"){
-            setShow(prev => !prev);
-            setShow2(prev => !prev);
-        }
+    cambiarBoton()
     },[type])
 
 
@@ -190,14 +219,14 @@ const ServiceDetails = ( {type} ) => {
                             <Grid container direction="row" spacing={3} id="trabajo">
                                 
                                 <Grid item>
-                                <Button variant="contained" onClick={() => handleButtonClick1("Aceptado")}>Aceptar Trabajo</Button>
+                                <Button variant="contained" onClick={() => handleButtonClick1()}>Aceptar Trabajo</Button>
                                 </Grid>
                                 <Grid item>
-                                <Button variant="contained" onClick={() => handleButtonClick1("Rechazado")}>Rechazar Trabajo </Button>
+                                <Button variant="contained" onClick={() => handleButtonClick2()}>Rechazar Trabajo </Button>
                                 </Grid> 
                             </Grid>)}
                         {show2 && (<Grid item id="terminar" visibility={false}>
-                            <Button variant="contained" onClick={Finalizar}>Terminar y Notificar Servicio </Button>
+                            <Button variant="contained" onClick={() => Finalizar()}>Terminar y Notificar Servicio </Button>
                             </Grid>)}
                         </Grid>
                         

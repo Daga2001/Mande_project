@@ -212,7 +212,8 @@ class HistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = History
         fields = (
-            "hid", "amount", "client_id", "service", "job"
+            "hid", "amount", "client_id", "service", "job",
+            "sid"
         )
 
 class HistorySerializerSimple(serializers.ModelSerializer):

@@ -13,8 +13,7 @@ const TableOrders = ( {type} ) => {
     { id: 'id', label: 'ID', minWidth: 50 },
     { id: 'servicio', label: 'Servicio Prestado', minWidth: 100 },
     { id: 'description', label: 'Comentario del cliente', minWidth: 100 },
-    { id: 'aceptado', label: '¿Aceptado?', minWidth: 100 },
-    { id: 'terminado', label: '¿Terminado?', minWidth: 100 },
+    { id: 'estado', label: 'Estado', minWidth: 100 },
     { id: 'accion', label: 'Acción', minWidth: 75 },
   ];
   
@@ -53,15 +52,6 @@ const TableOrders = ( {type} ) => {
     const datos = await utils.consultarHistorial(config);
     console.log("datos:", datos)
 
-    let isFinished = (datos, i) => {
-      if(datos[i].service.rating=="Terminado") {
-        return "Si"
-      }
-      else {
-        return "No"
-      }
-    }
-
     let datosProcesados = []
     for (let i = 0; i < datos.length; i++) {
       datosProcesados.push({
@@ -69,7 +59,7 @@ const TableOrders = ( {type} ) => {
         servicio: datos[i].job,
         description: datos[i].service.description,
         aceptado: datos[i].service.status,
-        terminado: isFinished(datos, i),
+        serid: datos[i].sid,
       })
     }
     console.log("datos2:", datosProcesados)
@@ -77,7 +67,8 @@ const TableOrders = ( {type} ) => {
   }
 
   const handleClick= (value) => {
-    navigate("../service", {state: {sid:value.id , title:value.servicio, description:value.description,estado:value.aceptado}});
+    console.log(value.serid)
+    navigate("../service", {state: {sid:value.serid , title:value.servicio, description:value.description,estado:value.aceptado}});
   }
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
@@ -135,7 +126,6 @@ const TableOrders = ( {type} ) => {
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.servicio}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.description}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.aceptado}</TableCell>
-                      <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>{row.terminado}</TableCell>
                       <TableCell align='center' sx={{border: '1px solid rgb(3,9,94)', fontFamily: 'Abel, sans-serif'}}>
                         <Button variant='contained' onClick={() => handleClick(row)}>
                           Ver
