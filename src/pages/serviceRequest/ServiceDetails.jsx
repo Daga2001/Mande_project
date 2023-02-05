@@ -66,20 +66,25 @@ const ServiceDetails = ( {type} ) => {
                 "cvv":cvv
             })
           }
+          console.log("headerToken:",headerToken)
           const link="http://127.0.0.1:8000/mande/paymentMethod/validate"
           const response = await fetch(link,config)
           const data= await response.json();
-          console.log (data)
+          console.log ("data:",data)
     }
 
     const obtenerDatos = async() => {
-        const config = headerToken;
+        const config = {
+            method: 'GET',
+            headers: headerToken.headers,
+          };
         const link = "http://127.0.0.1:8000/mande/user/view"
+        console.log("config datos:",headerToken)
         const response=await fetch(link,config)
         const data = await response.json()
         setCorreo(data.user.email)
         setID(data.user.uid)
-        console.log(data)
+        console.log("answer datos:",data)
     }
 
     const enviarCorreo = async() => {
@@ -88,6 +93,7 @@ const ServiceDetails = ( {type} ) => {
             headers: headerToken.headers,
             body: JSON.stringify({"sid":dataService})
           }
+          console.log("config correo:", config)
           const link="http://127.0.0.1:8000/mande/user/notify"
           const response = await fetch(link,config)
           const data = await response.json()

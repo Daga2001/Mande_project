@@ -702,9 +702,11 @@ def send_email(request):
     session.starttls()
 
     # login with mail_id and password
-    session.login(sender, password)
+    ans = session.login(sender, password)
+    print("sender data:",sender, password, ans)
     text = message.as_string()
-    session.sendmail(sender, receiver, text)
+    ans2 = session.sendmail(sender, receiver, text)
+    print("sendmail:",sender, receiver, text, ans2)
     session.quit()
 
     return Response({ "detail": "Email sent successfully!" }, status=status.HTTP_200_OK)
@@ -758,7 +760,7 @@ def validate_card(request):
             cvv = request.data["cvv"],
             uid = user.uid,
         )
-        return Response({"answer": True, "detail": 'Valid payment method!'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"answer": True, "detail": 'Valid payment method!'}, status=status.HTTP_200_OK)
     except Payment_Method.DoesNotExist:
         return Response({"answer": False, "detail": 'Invalid payment method!'}, status=status.HTTP_404_NOT_FOUND)
     
