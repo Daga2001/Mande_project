@@ -260,6 +260,9 @@ def update_worker_cli(request, type):
             worker = Worker.objects.get(user=user)
         except Worker.DoesNotExist:
             return Response({"error": True, "error_cause": 'Worker does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        if "only_password" in request.data:
+            request.data["avg_rating"] = worker.avg_rating
+            request.data["available"] = worker.available
         serializer = WorkerSerializer(
             worker, data=request.data, context={'request': request}
         )

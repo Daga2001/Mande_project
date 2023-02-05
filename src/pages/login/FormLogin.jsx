@@ -33,12 +33,14 @@ const FormLogin = () => {
       password: values.password,
       phone: values.password,
     };
-    console.log(data);
-    fetch("http://127.0.0.1:8000/mande/user/login", {
+    let config = {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(data),
-    })
+    }
+    console.log("user_data:",data);
+    console.log("config login:", config)
+    fetch("http://127.0.0.1:8000/mande/user/login", config)
       .then((res) => res.json())
       .then((res) => {
         window.localStorage.setItem(

@@ -26,25 +26,26 @@ const FormProfile = ( {type} ) => {
     const link="http://127.0.0.1:8000/mande/user/view"
     const response= await fetch(link,config)
     const data = await response.json()
-    setInfo(
-      { f_name:data.user.f_name,
-        l_name:data.user.l_name,
-        uid:data.user.uid,
-        birth_dt:data.user.birth_dt,
-        address_id:data.user.address_id,
-        email:data.user.email,
-        password:data.user.password,
-        phone:data.phone
-      })
+    const body = { f_name:data.user.f_name,
+      l_name:data.user.l_name,
+      uid:data.user.uid,
+      birth_dt:data.user.birth_dt,
+      address_id:data.user.address_id,
+      email:data.user.email,
+      // password:data.user.password,
+      phone:data.phone
+    }
+    console.log("info_get:",body)
+    setInfo(body)
     setAverage(data.avg_rating)
   }
 
-  const guardarDatosUser = async () => {
+  const guardarDatosUser = async (info) => {
     const config = {
       method: 'PUT',
       headers:headerToken.headers,
       body:JSON.stringify({
-        "password":info.password,
+        // "password":info.password,
         "uid":info.uid, 
         "f_name":info.f_name, 
         "l_name":info.l_name, 
@@ -53,10 +54,11 @@ const FormProfile = ( {type} ) => {
         "address_id":info.address_id,
       })
     }
+    console.log("config update:", config)
     const link="http://127.0.0.1:8000/mande/user/update"
     const response = await fetch(link,config)
     const data= await response.json()
-    console.log(data)
+    console.log("updated:",data)
 
     guardarDatosCliente()
   }
@@ -81,20 +83,19 @@ const FormProfile = ( {type} ) => {
   },[type]);
 
   const handleFormSubmit = (values) => {
-    setInfo(
-      {
-        f_name:values.firstName,
-        l_name:values.lastName,
-        uid:values.idNumber,
-        birth_dt:values.dateBirth,
-        address_id:values.address,
-        email:values.email,
-        password: values.password,
-        phone:values.contact
-      }
-    )
-    console.log(info)
-    guardarDatosUser()
+    let body = {
+      f_name:values.firstName,
+      l_name:values.lastName,
+      uid:values.idNumber,
+      birth_dt:values.dateBirth,
+      address_id:values.address,
+      email:values.email,
+      // password: values.password,
+      phone:values.contact
+    }
+    setInfo(body)
+    console.log("info_to_update:",info)
+    guardarDatosUser(body)
   };
 
   const initialValues = {
@@ -104,7 +105,7 @@ const FormProfile = ( {type} ) => {
     dateBirth: info.birth_dt,
     address: info.address_id,
     email: info.email,
-    password: info.password,
+    // password: info.password,
     contact:info.phone,
   };
 
@@ -120,10 +121,10 @@ const FormProfile = ( {type} ) => {
       // .matches(phoneRegExp, "Phone number is not valid")
       .required(t("registration1.error.require")),
     address: yup.string().required(t("registration1.error.require")),
-    password: yup
-      .string()
-      .required(t("registration1.error.require"))
-      .min(5, t("registration1.error.invalid-password")),
+    // password: yup
+    //   .string()
+    //   .required(t("registration1.error.require"))
+    //   .min(5, t("registration1.error.invalid-password")),
     idNumber: yup.string().required(t("registration1.error.require")),
   });
 
@@ -197,6 +198,7 @@ const FormProfile = ( {type} ) => {
                     name="idNumber"
                     error={!!touched.idNumber && !!errors.idNumber}
                     helperText={touched.idNumber && errors.idNumber}
+                    disabled={true}
                     sx={{ gridColumn: "span 3" }}
                   />
                   <TextField
@@ -254,7 +256,7 @@ const FormProfile = ( {type} ) => {
                     helperText={touched.contact && errors.contact}
                     sx={{ gridColumn: "span 3" }}
                   />
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     variant="filled"
                     type="password"
@@ -266,7 +268,7 @@ const FormProfile = ( {type} ) => {
                     error={!!touched.password && !!errors.password}
                     helperText={touched.password && errors.password}
                     sx={{ gridColumn: "span 3" }}
-                  />
+                  /> */}
                 </Box>
                 <Box display="flex" justifyContent="end" mt="20px">
                   <Button

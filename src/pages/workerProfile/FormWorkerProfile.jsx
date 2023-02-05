@@ -56,7 +56,24 @@ const FormWorkerProfile = ( {type} ) => {
     const link="http://127.0.0.1:8000/mande/user/update"
     const response = await fetch(link,config)
     const data= await response.json();
-    console.log(data)
+    console.log("user_data_stored:",data)
+  }
+
+  const guardarContraseña= async (password) => {
+    const config = {
+      method: 'PUT',
+      headers: headerToken.headers,
+      body: JSON.stringify(
+        {
+          "password": password,
+          "only_password": true,
+        }
+      )
+    }
+    const link="http://127.0.0.1:8000/mande/worker/update"
+    const response = await fetch(link,config)
+    const data = await response.json()
+    console.log("password_change:",data)
   }
 
   useEffect(() => {
@@ -78,7 +95,7 @@ const FormWorkerProfile = ( {type} ) => {
     )
     console.log(info)
     guardarDatosUser()
-
+    guardarContraseña(values.password)
   };
   
   
@@ -93,8 +110,8 @@ const FormWorkerProfile = ( {type} ) => {
     address: yup.string().required(t("registration1.error.require")),
     password: yup
       .string()
-      .required(t("registration1.error.require"))
-      .min(5, t("registration1.error.invalid-password")),
+      .required(t("registration1.error.require")),
+      // .min(5, t("registration1.error.invalid-password")),
     idNumber: yup.string().required(t("registration1.error.require")),
   });
 
@@ -178,6 +195,7 @@ const FormWorkerProfile = ( {type} ) => {
                     name="idNumber"
                     error={!!touched.idNumber && !!errors.idNumber}
                     helperText={touched.idNumber && errors.idNumber}
+                    disabled={true}
                     sx={{ gridColumn: "span 3" }}
                   />
                   <TextField
